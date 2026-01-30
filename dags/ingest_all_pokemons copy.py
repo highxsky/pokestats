@@ -65,9 +65,10 @@ POKE_DB = "/home/highxsky/highxsky/sqlite_work/poke_db/poke_db.db"
 # Functions
 # ==================================================
 
-def get_generation_pokemons(generation: int) -> list:
+def get_all_gen_pokemons(generation: int) -> list:
     """
-    Fetch all Pokémons from the PokeAPI. Then parses it into a clean dataframe
+    Fetch all Pokémons from the PokeAPI for a specific generation.
+    Then parses it into a clean dataframe.
     Args:
         - generation: integer
     Returns:
@@ -96,7 +97,7 @@ def get_generation_pokemons(generation: int) -> list:
         columns=['id', 'name']
     )
 
-    pokemon_details = pokemon_details['name'] = pokemon_details['name'].str.capitalize()
+    pokemon_details['name'] = pokemon_details['name'].str.capitalize()
 
     return pokemon_details
 
@@ -124,32 +125,6 @@ def check_uploaded_pokemons(pokemons: pd.DataFrame):
         ingested_pokemons.append(row[0])
 
     return ingested_pokemons
-
-
-
-    endpoint = f'https://pokeapi.co/api/v2/generation/{generation}/'
-    pokemon_dict = {}
-
-    try:
-        resp = requests.get(endpoint)
-        resp.raise_for_status()
-        data = resp.json()
-        pokemon_species = data.get("pokemon_species")
-    except:
-        print(f"Could not fetch Gen {generation} pokemons!")
-
-    for pokemon in pokemon_species:
-        key = int(pokemon.get("url").rstrip('/').split('/')[-1])
-        # remove last /, splits by / delimiter, gets last group --> poke number
-        value = pokemon.get("name")
-        pokemon_dict[key] = value
-
-    pokemon_details = pd.DataFrame(
-        data=list(pokemon_dict.items()), 
-        columns=['id', 'name']
-    )
-
-    return pokemon_details
 
 def upload_pokemons_to_ingest(gen_pokemons: pd.DataFrame):
     """
@@ -264,7 +239,10 @@ def ingest_selected_pokemons(poke_db, pokemons_to_ingest, pokemon_details) -> pd
 
     return None
 
-all_pokemon_details = get_all_pokemon_details(GENERATION)
+all_gen_pokemons = get_all_gen_pokemons(GENERATION)
+
+#%%
+
 already_ingested_pokemons = get_already_ingested_pokemons(POKE_DB)
 pokemons_not_ingested_yet = get_pokemons_to_ingest(all_pokemon_details, already_ingested_pokemons)
 random_pokemons_to_ingest = select_random_pokemons(pokemons_not_ingested_yet)

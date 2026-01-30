@@ -1,8 +1,2 @@
-postgres:
-    port: "5432"
 project:
     name: pokemon-airflow
-webserver:
-    port: "8081"
-api-server:
-    port: "8081"

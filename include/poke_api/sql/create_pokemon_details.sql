@@ -1,6 +1,6 @@
 -- Create table with pokemon attributes
 CREATE TABLE IF NOT EXISTS pokemon_details (
-	pokemon_id INTEGER PRIMARY KEY,
+	id INTEGER PRIMARY KEY,
     generation INTEGER,
     height INTEGER,
     weight INTEGER

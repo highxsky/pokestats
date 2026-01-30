@@ -1,0 +1,12 @@
+version: "3.1"
+services:
+  postgres:
+    restart: "no"
+  webserver:
+    restart: "no"
+  api-server:
+    restart: "no"
+  scheduler:
+    restart: "no"
+  triggerer:
+    restart: "no"

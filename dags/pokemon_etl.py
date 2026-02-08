@@ -22,7 +22,7 @@ from datetime import datetime
 import requests
 import pandas as pd
 import duckdb
-from airflow_provider_duckdb.hooks.duckdb import DuckDBHook
+from duckdb_provider.hooks.duckdb_hook import DuckDBHook
 
 # --------------------------------------------------------------------------------
 # Constants
@@ -39,7 +39,7 @@ LOG = logging.getLogger(__name__)
 @dag(
     dag_id='pokemon_etl',
     start_date=datetime(2024, 1, 1),
-    schedule=None,
+    schedule="@daily",
     catchup=False,
     tags=['pokemon', 'etl']
 )
@@ -90,11 +90,16 @@ def pokemon_etl():
             return pokemon_ids
 
     @task
-    def select_three_random_pokemons(pokemon_ids_not_ingested):
+    def select_random_pokemons(pokemon_ids_not_ingested):
         import random
 
-        pokemons_ids_to_ingest = random.sample(pokemon_ids_not_ingested, k=10)
-
+        # error handling when there are less than 10 pokemons to ingest
+        left_to_ingest = len(pokemon_ids_not_ingested)
+        if left_to_ingest >= 10:
+            pokemons_ids_to_ingest = random.sample(pokemon_ids_not_ingested, k=10)
+        else: 
+            pokemons_ids_to_ingest = random.sample(pokemon_ids_not_ingested, k=left_to_ingest)
+        
         return pokemons_ids_to_ingest
 
     @task
@@ -166,7 +171,7 @@ def pokemon_etl():
 
     pokemon_ids = extract_pokemon_ids(1)
     pokemons_not_ingested = identify_pokemons_not_ingested(pokemon_ids)
-    pokemons_to_ingest = select_three_random_pokemons(pokemons_not_ingested)
+    pokemons_to_ingest = select_random_pokemons(pokemons_not_ingested)
 
 # --------------------------------------------------------------------------------
 # Flow

@@ -1,7 +1,6 @@
 .git
 
-# Airflfow
-airflow_settings.yaml
+# Airflow
 airflow-webserver.pid
 webserver_config.py
 airflow.cfg

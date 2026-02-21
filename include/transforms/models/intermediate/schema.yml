@@ -1,0 +1,42 @@
+version: 2
+models:
+  - name: int_stats
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+      - name: poke_id
+        data_type: INTEGER
+      - name: hp
+        data_type: INTEGER
+      - name: attack
+        data_type: INTEGER
+      - name: defense
+        data_type: INTEGER
+      - name: special_attack
+        data_type: INTEGER
+      - name: special_defense
+        data_type: INTEGER
+      - name: speed
+        data_type: INTEGER
+  - name: int_past_types
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+      - name: poke_id
+        data_type: INTEGER
+      - name: generation
+        data_type: INTEGER
+      - name: slot
+        data_type: VARCHAR
+      - name: type
+        data_type: VARCHAR
+  - name: int_types
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+      - name: poke_id
+        data_type: INTEGER
+      - name: slot
+        data_type: INTEGER
+      - name: type
+        data_type: VARCHAR

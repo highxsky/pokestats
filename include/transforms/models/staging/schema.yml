@@ -1,0 +1,56 @@
+version: 2
+models:
+  - name: stg_moves
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+      - name: poke_id
+        data_type: INTEGER
+      - name: moves
+        data_type: JSON
+  - name: stg_pokemons
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+      - name: poke_gen
+        data_type: SMALLINT
+      - name: poke_id
+        data_type: INTEGER
+      - name: poke_name
+        data_type: VARCHAR
+      - name: height
+        data_type: DOUBLE
+      - name: weight
+        data_type: DOUBLE
+  - name: stg_stats
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+      - name: poke_id
+        data_type: INTEGER
+      - name: stats
+        data_type: JSON
+  - name: stg_past_types
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+      - name: poke_id
+        data_type: INTEGER
+      - name: past_types
+        data_type: JSON
+  - name: stg_past_stats
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+      - name: poke_id
+        data_type: INTEGER
+      - name: past_stats
+        data_type: JSON
+  - name: stg_types
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+      - name: poke_id
+        data_type: INTEGER
+      - name: types
+        data_type: JSON

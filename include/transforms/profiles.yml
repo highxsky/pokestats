@@ -1,0 +1,14 @@
+transforms:
+  target: dev
+
+  outputs:
+    dev:
+      type: duckdb
+      path: md:poke_db
+      schema: dbt_dev
+      threads: 1
+    prod:
+      type: duckdb
+      path: md:poke_db
+      schema: analytics
+      threads: 4

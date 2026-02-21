@@ -1,0 +1,44 @@
+version: 2
+models:
+  - name: mart_pokemons
+    columns:
+      - name: poke_gen
+        data_type: SMALLINT
+      - name: poke_id
+        data_type: INTEGER
+      - name: poke_name
+        data_type: VARCHAR
+      - name: height
+        data_type: DOUBLE
+      - name: weight
+        data_type: DOUBLE
+  - name: mart_stats
+    columns:
+      - name: poke_id
+        data_type: INTEGER
+      - name: hp
+        data_type: INTEGER
+      - name: attack
+        data_type: INTEGER
+      - name: defense
+        data_type: INTEGER
+      - name: special_attack
+        data_type: INTEGER
+      - name: special_defense
+        data_type: INTEGER
+      - name: speed
+        data_type: INTEGER
+      - name: total_stat_points
+        data_type: INTEGER
+  - name: mart_types
+    columns:
+      - name: type_id
+        data_type: VARCHAR
+      - name: poke_id
+        data_type: INTEGER
+      - name: type
+        data_type: VARCHAR
+      - name: slot
+        data_type: INTEGER
+      - name: is_primary_slot
+        data_type: BOOLEAN

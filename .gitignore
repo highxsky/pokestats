@@ -8,6 +8,7 @@ airflow.db
 
 # Astro
 astro
+.astro/
 
 # MacOS
 .DS_Store

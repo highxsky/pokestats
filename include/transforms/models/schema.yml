@@ -1,0 +1,22 @@
+version: 2
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: pokemon_data
+        description: Raw data fetched from the PokeAPI
+        loaded_at_field: fetch_date
+        freshness:
+          warn_after: {count: 15, period: day}
+          error_after: {count: 30, period: day}
+        columns:
+          - name: id
+            data_type: INTEGER
+          - name: fetch_date
+            data_type: TIMESTAMP
+          - name: batch_id
+            data_type: VARCHAR
+          - name: generation
+            data_type: SMALLINT
+          - name: raw
+            data_type: JSON

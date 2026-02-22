@@ -4,8 +4,10 @@ models:
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
       - name: poke_id
         data_type: INTEGER
+        description: A pokemon's identifier
       - name: hp
         data_type: INTEGER
       - name: attack
@@ -22,18 +24,24 @@ models:
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
       - name: poke_id
         data_type: INTEGER
+        description: A pokemon's identifier
       - name: generation
         data_type: INTEGER
+        description: Generation of a pokemon
       - name: slot
         data_type: VARCHAR
       - name: type
         data_type: VARCHAR
   - name: int_types
     columns:
+      - name: type_id
+        data_type: VARCHAR
       - name: fetch_date
         data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
       - name: poke_id
         data_type: INTEGER
       - name: slot

@@ -3,53 +3,72 @@ models:
   - name: stg_moves
     columns:
       - name: fetch_date
+        description: Datetime when a pokemon was fetched
         data_type: TIMESTAMP
       - name: poke_id
+        description: A pokemon's identifier
         data_type: INTEGER
       - name: moves
+        description: A pokemon's moves
         data_type: JSON
   - name: stg_pokemons
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
       - name: poke_gen
+        description: A pokemon's generation
         data_type: SMALLINT
       - name: poke_id
+        description: A pokemon's identifier
         data_type: INTEGER
       - name: poke_name
+        description: A pokemon's name
         data_type: VARCHAR
       - name: height
+        description: A pokemon's height (in meters)
         data_type: DOUBLE
       - name: weight
+        description: A pokemon's weight (in kilograms)
         data_type: DOUBLE
   - name: stg_stats
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
       - name: poke_id
+        description: A pokemon's identifier
         data_type: INTEGER
       - name: stats
+        description: A pokemon's stats
         data_type: JSON
   - name: stg_past_types
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
       - name: poke_id
+        description: A pokemon's identifier
         data_type: INTEGER
       - name: past_types
+        description: A pokemon's past types
         data_type: JSON
   - name: stg_past_stats
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
       - name: poke_id
+        description: A pokemon's identifier
         data_type: INTEGER
       - name: past_stats
+        description: A pokemon's past stats
         data_type: JSON
   - name: stg_types
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
       - name: poke_id
         data_type: INTEGER
       - name: types

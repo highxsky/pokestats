@@ -4,30 +4,74 @@ models:
     columns:
       - name: poke_gen
         data_type: SMALLINT
+        description: A pokemon's generation
       - name: poke_id
         data_type: INTEGER
+        description: A pokemon's identifier
       - name: poke_name
         data_type: VARCHAR
+        description: A pokemon's name
       - name: height
         data_type: DOUBLE
+        description: A pokemon's height (in meters)
+        tests:
+          - min_value:
+              arguments:
+                min_val: 0
       - name: weight
         data_type: DOUBLE
+        description: A pokemon's weight (in kilograms)
+        tests:
+          - min_value:
+              arguments:
+                min_val: 0
   - name: mart_stats
     columns:
       - name: poke_id
         data_type: INTEGER
+        description: A pokemon's identifier
       - name: hp
         data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: attack
         data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: defense
         data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: special_attack
         data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: special_defense
         data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: speed
         data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: total_stat_points
         data_type: INTEGER
   - name: mart_types

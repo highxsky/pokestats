@@ -11,12 +11,17 @@ sources:
           error_after: {count: 30, period: day}
         columns:
           - name: id
+            description: A pokemon's identifier
             data_type: INTEGER
           - name: fetch_date
+            description: Datetime when a pokemon was fetched
             data_type: TIMESTAMP
           - name: batch_id
+            description: Airflow DAG batch ID
             data_type: VARCHAR
           - name: generation
+            description: Generation of a pokemon
             data_type: SMALLINT
           - name: raw
+            description: JSON array fetched from PokeAPI
             data_type: JSON

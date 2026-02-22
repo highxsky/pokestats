@@ -46,7 +46,6 @@ pokemon_raw_asset = Asset("motherduck://raw/pokemon_data")
     schedule="@daily",
     catchup=False,
     tags=["pokemon", "etl"],
-    outlets=[pokemon_raw_asset]
     params={
         "generation": Param(
             default=1,
@@ -120,7 +119,7 @@ def pokemon_etl():
         
         return pokemons_ids_to_ingest
 
-    @task
+    @task(outlets=[pokemon_raw_asset])
     def fetch_and_import_pokemon_data(pokemons_ids_to_ingest):
         import json
         import pyarrow as pa

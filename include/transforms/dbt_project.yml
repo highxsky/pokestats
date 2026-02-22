@@ -9,8 +9,14 @@ test-paths: ["tests"]
 macro-paths: ["macros"]
 # snapshot-paths: ["snapshots"]
 
+# Redirect build artifacts to container-local /tmp to avoid Docker/host
+# permission conflicts when running inside a containerized Airflow environment.
+# target/ and logs/ are ephemeral and must never be written to the bind mount.
+target-path: "/tmp/dbt_target"
+log-path: "/tmp/dbt_logs"
+
 # directories to be removed by `dbt clean`
-clean-targets:         
+clean-targets:
   - "target"
   - "dbt_packages"
 

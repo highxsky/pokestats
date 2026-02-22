@@ -2,12 +2,10 @@
 
 
 ### To Do
-- [ ] Rewrite DBT workflow logic
-  - [ ] 4 layers: raw, staging, intermediate, marts
-      - [ ] raw: don't change
-      - [ ] staging: rename cols + cast types
-      - [ ] intermediate: 3 tables: pokemons, types, stats
-      - [ ] marts: business logic
+- [ ] Fetch generation in DAG
+  - [ ] Number of pokemons per generation
+  - [ ] Pokemons ingested per generation
+  - [ ] Keep ingesting until each generation is done
 
 ### In Progress
 - [ ] aaa

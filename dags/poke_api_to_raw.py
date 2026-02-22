@@ -16,7 +16,7 @@
 
 import logging
 from pathlib import Path
-from airflow.sdk import dag, task, get_current_context
+from airflow.sdk import dag, task, get_current_context, Asset
 from airflow.models.param import Param
 from datetime import datetime
 import requests
@@ -31,6 +31,12 @@ QUERIES_PATH = ROOT_PATH / "include" / "sql"
 LOG = logging.getLogger(__name__)
 
 # --------------------------------------------------------------------------------
+# Asset
+# --------------------------------------------------------------------------------
+
+pokemon_raw_asset = Asset("motherduck://raw/pokemon_data")
+
+# --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
@@ -40,6 +46,7 @@ LOG = logging.getLogger(__name__)
     schedule="@daily",
     catchup=False,
     tags=["pokemon", "etl"],
+    outlets=[pokemon_raw_asset]
     params={
         "generation": Param(
             default=1,

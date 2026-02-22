@@ -15,7 +15,7 @@
 # --------------------------------------------------------------------------------
 
 from pathlib import Path
-from airflow.sdk import dag
+from airflow.sdk import dag, Asset
 from airflow.providers.standard.operators.bash import BashOperator
 from datetime import datetime
 
@@ -27,13 +27,19 @@ ROOT_PATH = Path(__file__).parent.parent
 DBT_PROJECT_PATH = ROOT_PATH / "include" / "transforms"
 
 # --------------------------------------------------------------------------------
+# Asset
+# --------------------------------------------------------------------------------
+
+pokemon_raw_asset = Asset("motherduck://raw/pokemon_data")
+
+# --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
 @dag(
     dag_id="dbt_transforms",
     start_date=datetime(2024, 1, 1),
-    schedule="@daily",
+    schedule=pokemon_raw_asset,
     catchup=False,
     tags=["dbt", "transforms"]
 )

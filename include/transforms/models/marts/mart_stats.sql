@@ -1,22 +1,8 @@
-{{ 
-    config(
-      materialized='incremental', 
-      unique_key='poke_id' ,
-      incremental_strategy='delete+insert',
-      pre_hook="
-        SET variable max_fetch_date = (SELECT MAX(fetch_date) FROM {{ ref('int_stats') }}); 
-      "
-    )
-}}
+{{ mart_incremental_load_config('poke_id', 'int_stats') }}
 
-WITH source as (
-  SELECT
-    *
-  FROM
-    {{ ref('int_stats') }}
-  {% if is_incremental() %}
-  WHERE fetch_date >= getvariable('max_fetch_date')
-  {% endif %}
+WITH source AS (
+  SELECT * FROM {{ ref('int_stats') }}
+  {{ incremental_where() }}
 )
 
 SELECT

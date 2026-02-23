@@ -1,0 +1,13 @@
+[project]
+name = "pokemon-airflow"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "airflow-provider-duckdb>=0.2.0",
+    "dbt-duckdb>=1.10.1",
+    "dbt-osmosis>=1.2.2",
+    "openai>=2.21.0",
+    "pyarrow>=23.0.1",
+]

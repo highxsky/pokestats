@@ -112,8 +112,8 @@ def pokemon_etl():
 
         # error handling when there are less than 10 pokemons to ingest
         left_to_ingest = len(pokemon_ids_not_ingested)
-        if left_to_ingest >= 10:
-            pokemons_ids_to_ingest = random.sample(pokemon_ids_not_ingested, k=10)
+        if left_to_ingest >= 50:
+            pokemons_ids_to_ingest = random.sample(pokemon_ids_not_ingested, k=50)
         else: 
             pokemons_ids_to_ingest = random.sample(pokemon_ids_not_ingested, k=left_to_ingest)
         

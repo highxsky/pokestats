@@ -74,6 +74,61 @@ models:
                 max_value: 255
       - name: total_stat_points
         data_type: INTEGER
+  - name: mart_strongest_pokemons
+    description: All pokemons ranked from strongest to weakest by total stat points, with a tier label (S to F)
+    columns:
+      - name: poke_gen
+        data_type: SMALLINT
+        description: A pokemon's generation
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+        tests:
+          - unique
+          - not_null
+      - name: poke_name
+        data_type: VARCHAR
+        description: A pokemon's name
+        tests:
+          - not_null
+      - name: hp
+        data_type: INTEGER
+        description: A pokemon's HP stat
+      - name: attack
+        data_type: INTEGER
+        description: A pokemon's attack stat
+      - name: defense
+        data_type: INTEGER
+        description: A pokemon's defense stat
+      - name: special_attack
+        data_type: INTEGER
+        description: A pokemon's special attack stat
+      - name: special_defense
+        data_type: INTEGER
+        description: A pokemon's special defense stat
+      - name: speed
+        data_type: INTEGER
+        description: A pokemon's speed stat
+      - name: total_stat_points
+        data_type: INTEGER
+        description: Sum of all six stats
+        tests:
+          - min_value:
+              arguments:
+                min_val: 0
+      - name: rank
+        data_type: INTEGER
+        description: Pokemon's overall rank from strongest (1) to weakest
+        tests:
+          - unique
+          - not_null
+      - name: tier
+        data_type: VARCHAR
+        description: "Strength tier based on percentile rank: S (top 5%), A (5-20%), B (20-45%), C (45-70%), D (70-90%), F (bottom 10%)"
+        tests:
+          - accepted_values:
+              values: ['S', 'A', 'B', 'C', 'D', 'F']
+
   - name: mart_types
     columns:
       - name: type_id

@@ -16,6 +16,4 @@ airflow:
     - pool_name:
       pool_slot:
       pool_description:
-  variables:
-    - variable_name:
-      variable_value:
+  variables: []

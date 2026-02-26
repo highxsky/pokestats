@@ -18,6 +18,7 @@ import logging
 from pathlib import Path
 from airflow.sdk import dag, task, get_current_context, Asset
 from airflow.models.param import Param
+from airflow.sensors.base import PokeReturnValue
 from datetime import datetime
 import requests
 from duckdb_provider.hooks.duckdb_hook import DuckDBHook
@@ -37,6 +38,38 @@ LOG = logging.getLogger(__name__)
 pokemon_raw_asset = Asset("motherduck://raw/pokemon_data")
 
 # --------------------------------------------------------------------------------
+# Functions
+# --------------------------------------------------------------------------------
+
+def notify_on_failure(context):
+    from airflow.models import Variable
+    from airflow.utils.email import send_email
+    alert_email = Variable.get("alert_email", default_var=None)
+    if not alert_email:
+        LOG.warning("Alert email variable not set, skipping failure email.")
+        return None
+    
+    dag_id  = context["dag"].dag_id
+    run_id  = context["dag_run"].run_id
+    task_id = context["task_instance"].task_id
+    log_url = context["task_instance"].log_url
+    exc     = context.get("exception")
+
+    send_email(
+        to=[alert_email],
+        subject=f"[Airflow] DAG `{dag_id}` failed",
+        html_content=f"""
+            <h3>Pipeline Failure Alert</h3>
+            <b>DAG:</b> {dag_id}<br>
+            <b>Run ID:</b> {run_id}<br>
+            <b>Failed Task:</b> {task_id}<br>
+            <b>Error:</b> {exc}<br>
+            <b>Logs:</b> <a href="{log_url}">View logs</a>
+        """,
+    )
+
+
+# --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
@@ -46,6 +79,8 @@ pokemon_raw_asset = Asset("motherduck://raw/pokemon_data")
     schedule="@daily",
     catchup=False,
     tags=["pokemon", "etl"],
+    # on_failure_callback=notify_on_failure,
+
     params={
         "generation": Param(
             default=1,
@@ -54,10 +89,23 @@ pokemon_raw_asset = Asset("motherduck://raw/pokemon_data")
             maximum=9,
             description="Pokemon generation picked for ingestion"
         )
-    }
+    },
 )
 
 def pokemon_etl():
+
+    @task.sensor(poke_interval=60, timeout=300)
+    def api_check():
+        endpoint = 'https://pokeapi.co/api/v2/'
+
+        try:
+            resp = requests.get(endpoint)
+            if resp.status_code == 200:
+                return PokeReturnValue(is_done=True)
+            else:
+                return PokeReturnValue(is_done=False)
+        except requests.RequestException as e:
+            return PokeReturnValue(is_done=False)
 
     @task
     def fetch_pokemon_ids_in_gen():
@@ -77,11 +125,10 @@ def pokemon_etl():
             resp.raise_for_status()
             data = resp.json()
             pokemon_species = data.get("pokemon_species")
-        except:
+        except requests.RequestException as e:
             LOG.info(f"Could not fetch Gen {generation} pokemons!")
 
         pokemons = [int(pokemon.get('url').rstrip('/').split('/')[-1]) for pokemon in pokemon_species]
-
         return pokemons    
 
     @task
@@ -187,7 +234,11 @@ def pokemon_etl():
 
         return None
 
+    check = api_check()
     pokemon_ids = fetch_pokemon_ids_in_gen()
+
+    check >> pokemon_ids
+    
     pokemons_not_ingested = identify_pokemons_not_ingested(pokemon_ids)
     pokemons_to_ingest = select_random_pokemons(pokemons_not_ingested)
     fetch_and_import_pokemon_data(pokemons_to_ingest)

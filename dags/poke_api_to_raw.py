@@ -79,8 +79,7 @@ def notify_on_failure(context):
     schedule="@daily",
     catchup=False,
     tags=["pokemon", "etl"],
-    # on_failure_callback=notify_on_failure,
-
+    on_failure_callback=notify_on_failure,
     params={
         "generation": Param(
             default=1,

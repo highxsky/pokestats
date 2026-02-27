@@ -6,6 +6,6 @@
     *
     from {{ model }}
     where {{ column_name }} < {{ min_value }}
-    and {{ column_name }} > {{ max_value }}
+    OR {{ column_name }} > {{ max_value }}
 
 {% endmacro %}

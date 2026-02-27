@@ -17,3 +17,5 @@ airflow:
       pool_slot:
       pool_description:
   variables: []
+    # - variable_name: alert_email
+    #   variable_value: highxsky7@gmail.com

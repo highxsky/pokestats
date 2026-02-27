@@ -22,11 +22,14 @@ source_parsed AS (
     SELECT
         spp.fetch_date,
         spp.poke_id,
-        CAST(RIGHT(RTRIM(spp.generation_url, '/'), 1) AS INT) AS generation,
-        CAST(je.value->>'$.slot' AS VARCHAR) AS slot,
+        CAST(RIGHT(RTRIM(spp.generation_url, '/'), 1) AS INT) AS poke_gen,
+        CAST(je.value->>'$.slot' AS INT) AS slot,
         CAST(je.value->>'$.type.name' AS VARCHAR) AS type
     FROM source_pre_parsed spp,
         JSON_EACH(spp.past_types) AS je
 )
 
-SELECT * FROM source_parsed
+SELECT 
+    {{ dbt_utils.generate_surrogate_key(['poke_id', 'slot']) }} as type_id,
+    sp.* 
+FROM source_parsed sp

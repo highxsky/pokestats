@@ -8,7 +8,7 @@ with past_values as (
     pt.slot,
     pt.type,
     COALESCE(
-      LAG(pt.poke_gen, 1) over (
+      LAG((pt.poke_gen + 1), 1) over (
         partition by pt.poke_id, pt.slot
         order by pt.poke_gen
       ),
@@ -30,7 +30,7 @@ current_values as (
     t.poke_id,
     t.slot,
     t.type,
-    COALESCE(max_poke_gen, p.poke_gen + 1) as valid_from,
+    COALESCE(pt.max_poke_gen, p.poke_gen) as valid_from,
     NULL as valid_to
   from pma_tests.types t
   left join pma_tests.pokemons p
@@ -39,7 +39,7 @@ current_values as (
     select
       poke_id,
       slot,
-      max(poke_gen) as max_poke_gen
+      (max(poke_gen) + 1) as max_poke_gen
     from pma_tests.past_types
     group by poke_id, slot
   ) pt

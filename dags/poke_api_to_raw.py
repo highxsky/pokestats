@@ -14,21 +14,23 @@
 # Packages
 # --------------------------------------------------------------------------------
 
-import logging
 from pathlib import Path
+import logging
+import requests
+from datetime import datetime
+
 from airflow.sdk import dag, task, get_current_context, Asset
 from airflow.models.param import Param
 from airflow.sensors.base import PokeReturnValue
-from datetime import datetime
-import requests
+
 from duckdb_provider.hooks.duckdb_hook import DuckDBHook
+from include.callbacks import notify_on_failure
 
 # --------------------------------------------------------------------------------
 # Constants
 # --------------------------------------------------------------------------------
 
 ROOT_PATH = Path(__file__).parent.parent
-QUERIES_PATH = ROOT_PATH / "include" / "sql"
 LOG = logging.getLogger(__name__)
 
 # --------------------------------------------------------------------------------
@@ -36,38 +38,6 @@ LOG = logging.getLogger(__name__)
 # --------------------------------------------------------------------------------
 
 pokemon_raw_asset = Asset("motherduck://raw/pokemon_data")
-
-# --------------------------------------------------------------------------------
-# Functions
-# --------------------------------------------------------------------------------
-
-def notify_on_failure(context):
-    from airflow.models import Variable
-    from airflow.utils.email import send_email
-    alert_email = Variable.get("alert_email", default_var=None)
-    if not alert_email:
-        LOG.warning("Alert email variable not set, skipping failure email.")
-        return None
-    
-    dag_id  = context["dag"].dag_id
-    run_id  = context["dag_run"].run_id
-    task_id = context["task_instance"].task_id
-    log_url = context["task_instance"].log_url
-    exc     = context.get("exception")
-
-    send_email(
-        to=[alert_email],
-        subject=f"[Airflow] DAG `{dag_id}` failed",
-        html_content=f"""
-            <h3>Pipeline Failure Alert</h3>
-            <b>DAG:</b> {dag_id}<br>
-            <b>Run ID:</b> {run_id}<br>
-            <b>Failed Task:</b> {task_id}<br>
-            <b>Error:</b> {exc}<br>
-            <b>Logs:</b> <a href="{log_url}">View logs</a>
-        """,
-    )
-
 
 # --------------------------------------------------------------------------------
 # DAG
@@ -128,7 +98,7 @@ def pokemon_etl():
             LOG.info(f"Could not fetch Gen {generation} pokemons!")
 
         pokemons = [int(pokemon.get('url').rstrip('/').split('/')[-1]) for pokemon in pokemon_species]
-        return pokemons    
+        return pokemons
 
     @task
     def identify_pokemons_not_ingested(pokemon_ids):
@@ -140,28 +110,39 @@ def pokemon_etl():
             WHERE table_schema = 'raw' AND table_name = 'pokemon_data'
         """).fetchone()[0]
 
+        # Option 1 - A - if it doesn't exist, all pokemons are returned
         if not table_exists:
             LOG.info("Table raw.pokemon_data doesn't exist.")
             return pokemon_ids
 
+        # Option 1 - B - if it exists but no pokemons were ingested, all pokemons are returned
         df = con.execute("SELECT id FROM raw.pokemon_data").df()
-
         if df.empty:
             return pokemon_ids
 
+        # Option 2 - if it exists and pokemons were ingested already, only the ones not ingested are returned
         pokemons_ingested = [int(pid) for pid in df["id"].to_list()]
-        return [pid for pid in pokemon_ids if pid not in pokemons_ingested]
+        remaining_ids = [pid for pid in pokemon_ids if pid not in pokemons_ingested]
+
+        if not remaining_ids:
+            LOG.info("All pokemon already ingested. Short-circuiting the DAG.")
+
+        return remaining_ids
+
+    @task.short_circuit
+    def check_if_ingestion_required(pokemon_ids_to_ingest):
+        return bool(pokemon_ids_to_ingest)
 
     @task
-    def select_random_pokemons(pokemon_ids_not_ingested):
+    def select_random_pokemons(pokemon_ids_to_ingest):
         import random
 
         # error handling when there are less than 10 pokemons to ingest
-        left_to_ingest = len(pokemon_ids_not_ingested)
+        left_to_ingest = len(pokemon_ids_to_ingest)
         if left_to_ingest >= 50:
-            pokemons_ids_to_ingest = random.sample(pokemon_ids_not_ingested, k=50)
+            pokemons_ids_to_ingest = random.sample(pokemon_ids_to_ingest, k=50)
         else: 
-            pokemons_ids_to_ingest = random.sample(pokemon_ids_not_ingested, k=left_to_ingest)
+            pokemons_ids_to_ingest = random.sample(pokemon_ids_to_ingest, k=left_to_ingest)
         
         return pokemons_ids_to_ingest
 
@@ -233,13 +214,17 @@ def pokemon_etl():
 
         return None
 
+    # API test call, then if OK, fetch a list of pokemons
     check = api_check()
     pokemon_ids = fetch_pokemon_ids_in_gen()
-
     check >> pokemon_ids
     
+    # Check that there are pokemons to ingest, if so, ingest, else, short circuit
     pokemons_not_ingested = identify_pokemons_not_ingested(pokemon_ids)
+    gate = check_if_ingestion_required(pokemons_not_ingested)
     pokemons_to_ingest = select_random_pokemons(pokemons_not_ingested)
+    gate >> pokemons_to_ingest
+
     fetch_and_import_pokemon_data(pokemons_to_ingest)
 
 pokemon_etl()

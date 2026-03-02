@@ -2,5 +2,6 @@
 SELECT
     poke_id
 FROM {{ ref('mart_strongest_pokemons') }}
-WHERE rank = 1
-  AND tier != 'S'
+WHERE 
+    rank = 1
+    AND tier != 'S'

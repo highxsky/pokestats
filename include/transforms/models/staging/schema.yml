@@ -73,3 +73,17 @@ models:
         data_type: INTEGER
       - name: types
         data_type: JSON
+  - name: stg_pokemon_catalogue
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
+      - name: poke_gen
+        data_type: INTEGER
+        description: A pokemon's generation
+      - name: poke_name
+        data_type: VARCHAR
+        description: A pokemon's name
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier

@@ -4,7 +4,7 @@ sources:
     schema: raw
     tables:
       - name: pokemon_data
-        description: Raw data fetched from the PokeAPI
+        description: Pokemon's detailed data fetched from the PokeAPI in raw state
         loaded_at_field: fetch_date
         freshness:
           warn_after: {count: 15, period: day}
@@ -22,6 +22,19 @@ sources:
           - name: generation
             description: Generation of a pokemon
             data_type: SMALLINT
+          - name: raw
+            description: JSON array fetched from PokeAPI
+            data_type: JSON
+      - name: pokemon_catalogue
+        description: Pokemon's catalogue data fetched from the PokeAPI in raw state
+        loaded_at_field: fetch_date
+        freshness:
+          warn_after: {count: 6, period: month}
+          error_after: {count: 12, period: month}
+        columns:
+          - name: fetch_date
+            description: Datetime when a pokemon was fetched
+            data_type: TIMESTAMP
           - name: raw
             description: JSON array fetched from PokeAPI
             data_type: JSON

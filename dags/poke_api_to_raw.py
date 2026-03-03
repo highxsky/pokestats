@@ -21,7 +21,7 @@ from datetime import datetime
 
 from airflow.sdk import dag, task, get_current_context, Asset
 from airflow.models.param import Param
-from airflow.sensors.base import PokeReturnValue
+from airflow.sdk.bases.sensor import PokeReturnValue
 
 from duckdb_provider.hooks.duckdb_hook import DuckDBHook
 from include.callbacks import notify_on_failure
@@ -89,6 +89,7 @@ def pokemon_etl():
         generation = context["params"]["generation"]
 
         endpoint = f'https://pokeapi.co/api/v2/generation/{generation}/'
+        
         try:
             resp = requests.get(endpoint)
             resp.raise_for_status()
@@ -96,7 +97,8 @@ def pokemon_etl():
             pokemon_species = data.get("pokemon_species")
         except requests.RequestException as e:
             LOG.info(f"Could not fetch Gen {generation} pokemons!")
-
+            raise
+            
         pokemons = [int(pokemon.get('url').rstrip('/').split('/')[-1]) for pokemon in pokemon_species]
         return pokemons
 
@@ -189,6 +191,7 @@ def pokemon_etl():
             arrow_table = pa.Table.from_pylist(pokemon_list, schema=schema)
 
             con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
+            con.register("arrow_table", arrow_table)
             
             con.execute("""CREATE SCHEMA IF NOT EXISTS raw""")
 

@@ -3,20 +3,20 @@
 -- Fetching types from past types table (i.e. from changelog)
 WITH past AS (
     SELECT
-        fetch_date,
-        poke_id,
-        slot,
-        type,
+        pk.fetch_date,
+        pt.poke_id,
+        pt.slot,
+        pt.type,
         -- In case of multiple changes, fetches the previous one + 1 as valid from
         -- Otherwise it's valid from the gen the pokemon was introduced
         COALESCE(
-            LAG(poke_gen) OVER (
-            PARTITION BY poke_id, slot
-            ORDER BY poke_gen
+            LAG(pk.poke_gen) OVER (
+            PARTITION BY pt.poke_id, pt.slot
+            ORDER BY pt.poke_gen
             ) + 1,
             pk.poke_gen
         ) AS valid_from_gen,
-        poke_gen AS valid_to_gen,
+        pk.poke_gen AS valid_to_gen,
     FROM {{ ref('int_past_types') }} pt
     LEFT JOIN {{ ref('stg_pokemons') }} pk
         ON pt.poke_id = pk.poke_id

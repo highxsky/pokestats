@@ -12,7 +12,7 @@ WITH raw_input AS (
 SELECT
   ri.fetch_date,
   ri.poke_gen,
-  je.value->>'$.name' AS poke_name,
-  cast(split_part(je.value->>'$.url', '/', -2) AS INT) AS poke_id
+  cast(split_part(je.value->>'$.url', '/', -2) AS INT) AS poke_id,
+  je.value->>'$.name' AS poke_name
 FROM raw_input ri,
 json_each(ri.pkm_species) AS je

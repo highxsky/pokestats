@@ -1,12 +1,11 @@
-{{ config(materialized='view') }}
+{{ config(materialized='view', enabled=False) }}
 
 -- Fetching types from past types table (i.e. from changelog)
 WITH past AS (
     SELECT
         pk.fetch_date,
-        pt.poke_id,
-        pt.slot,
-        pt.type,
+        ps.poke_id,
+        ps.stat,
         -- In case of multiple changes, fetches the previous one + 1 as valid from
         -- Otherwise it's valid from the gen the pokemon was introduced
         COALESCE(

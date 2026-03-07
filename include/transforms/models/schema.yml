@@ -19,9 +19,6 @@ sources:
           - name: batch_id
             description: Airflow DAG batch ID
             data_type: VARCHAR
-          - name: generation
-            description: Generation of a pokemon
-            data_type: SMALLINT
           - name: raw
             description: JSON array fetched from PokeAPI
             data_type: JSON
@@ -29,12 +26,15 @@ sources:
         description: Pokemon's catalogue data fetched from the PokeAPI in raw state
         loaded_at_field: fetch_date
         freshness:
-          warn_after: {count: 6, period: month}
-          error_after: {count: 12, period: month}
+          warn_after: {count: 180, period: day}
+          error_after: {count: 360, period: day}
         columns:
           - name: fetch_date
             description: Datetime when a pokemon was fetched
             data_type: TIMESTAMP
+          - name: batch_id
+            description: Airflow DAG batch ID
+            data_type: VARCHAR
           - name: raw
             description: JSON array fetched from PokeAPI
             data_type: JSON

@@ -26,6 +26,6 @@ SELECT
     WHEN pct_rank >= 0.55 THEN 'B'
     WHEN pct_rank >= 0.30 THEN 'C'
     WHEN pct_rank >= 0.10 THEN 'D'
-    ELSE                       'F'
+    ELSE 'F'
   END AS tier
 FROM ranked

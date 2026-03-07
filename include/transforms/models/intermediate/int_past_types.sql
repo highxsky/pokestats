@@ -8,28 +8,19 @@ WITH source AS (
     FROM {{ ref('stg_past_types') }}
 ),
 
-source_pre_parsed AS (
+parsed AS (
     SELECT
-        pt.fetch_date,
-        pt.poke_id,
-        CAST(je.value->>'$.generation.url' AS VARCHAR) AS generation_url,
-        CAST(je.value->>'$.types' AS JSON) AS past_types
-    FROM source pt,
-        JSON_EACH(pt.past_types) AS je
-),
-
-source_parsed AS (
-    SELECT
-        spp.fetch_date,
-        spp.poke_id,
-        CAST(RIGHT(RTRIM(spp.generation_url, '/'), 1) AS INT) AS poke_gen,
-        CAST(je.value->>'$.slot' AS INT) AS slot,
-        CAST(je.value->>'$.type.name' AS VARCHAR) AS type
-    FROM source_pre_parsed spp,
-        JSON_EACH(spp.past_types) AS je
+        fetch_date,
+        poke_id,
+        CAST(STRING_SPLIT(RTRIM(gen->>'$.generation.url', '/'), '/')[-1] AS INT) AS poke_gen,
+        CAST(types->>'$.slot' AS INT) AS slot,
+        types->>'$.type.name' AS type
+    FROM source,
+        UNNEST(from_json(source.past_types, '["json"]')) AS t1(gen),
+        UNNEST(from_json(gen->'types', '["json"]')) AS t2(types)
 )
 
-SELECT 
-    {{ dbt_utils.generate_surrogate_key(['poke_id', 'slot']) }} as type_id,
-    sp.* 
-FROM source_parsed sp
+SELECT
+    {{ dbt_utils.generate_surrogate_key(['poke_id', 'poke_gen', 'slot']) }} AS past_type_id,
+    p.*
+FROM parsed p

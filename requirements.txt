@@ -3,4 +3,5 @@ airflow-provider-duckdb
 pyarrow
 dbt-duckdb
 dbt-osmosis
+astronomer-cosmos[dbt-duckdb]
 openai

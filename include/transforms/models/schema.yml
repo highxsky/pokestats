@@ -19,9 +19,6 @@ sources:
           - name: batch_id
             description: Airflow DAG batch ID
             data_type: VARCHAR
-          - name: generation
-            description: Generation of a pokemon
-            data_type: SMALLINT
           - name: raw
             description: JSON array fetched from PokeAPI
             data_type: JSON

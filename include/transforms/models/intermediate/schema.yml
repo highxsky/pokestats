@@ -20,31 +20,77 @@ models:
         data_type: INTEGER
       - name: speed
         data_type: INTEGER
-  - name: int_past_types
+  - name: int_past_stats
     columns:
+      - name: past_stat_id
+        data_type: VARCHAR
+        description: Surrogate key for a pokemon's past stat
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
-      - name: generation
+      - name: poke_gen
+        data_type: INTEGER
+        description: Generation of a pokemon
+      - name: stat_name
+        data_type: VARCHAR
+        description: A pokemon's stat name (e.g. attack, speed)
+      - name: stat_value
+        data_type: INTEGER
+        description: A pokemon's stat value (e.g. 85)
+  - name: int_past_types
+    columns:
+      - name: past_type_id
+        data_type: VARCHAR
+        description: Surrogate key for a pokemon's past type
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+      - name: poke_gen
         data_type: INTEGER
         description: Generation of a pokemon
       - name: slot
-        data_type: VARCHAR
+        data_type: INTEGER
       - name: type
         data_type: VARCHAR
   - name: int_types
     columns:
       - name: type_id
         data_type: VARCHAR
+        description: Surrogate key for a pokemon's type
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
       - name: poke_id
         data_type: INTEGER
+        description: A pokemon's identifier
       - name: slot
         data_type: INTEGER
       - name: type
         data_type: VARCHAR
+  - name: int_type_history
+    columns:
+      - name: type_id
+        data_type: VARCHAR
+        description: Surrogate key for a pokemon's type history entry
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+      - name: slot
+        data_type: INTEGER
+      - name: type
+        data_type: VARCHAR
+      - name: valid_from_gen
+        data_type: INTEGER
+        description: Generation from which this type assignment is valid
+      - name: valid_to_gen
+        data_type: INTEGER
+        description: Generation until which this type assignment was valid (NULL if current)

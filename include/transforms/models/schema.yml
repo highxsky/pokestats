@@ -19,8 +19,8 @@ sources:
           - name: batch_id
             description: Airflow DAG batch ID
             data_type: VARCHAR
-          - name: raw
-            description: JSON array fetched from PokeAPI
+          - name: payload
+            description: JSON payload fetched from PokeAPI
             data_type: JSON
       - name: pokemon_catalogue
         description: Pokemon's catalogue data fetched from the PokeAPI in raw state
@@ -35,6 +35,38 @@ sources:
           - name: batch_id
             description: Airflow DAG batch ID
             data_type: VARCHAR
-          - name: raw
-            description: JSON array fetched from PokeAPI
+          - name: payload
+            description: JSON payload fetched from PokeAPI
+            data_type: JSON
+      - name: version_group_data
+        description: Version group data fetched from the PokeAPI in raw state
+        loaded_at_field: fetch_date
+        freshness:
+          warn_after: {count: 360, period: day}
+          error_after: {count: 720, period: day}
+        columns:
+          - name: fetch_date
+            description: Datetime when the version group was fetched
+            data_type: TIMESTAMP
+          - name: batch_id
+            description: Airflow DAG batch ID
+            data_type: VARCHAR
+          - name: payload
+            description: JSON payload fetched from PokeAPI
+            data_type: JSON
+      - name: generation_data
+        description: Generation data fetched from the PokeAPI in raw state
+        loaded_at_field: fetch_date
+        freshness:
+          warn_after: {count: 360, period: day}
+          error_after: {count: 720, period: day}
+        columns:
+          - name: fetch_date
+            description: Datetime when the generation was fetched
+            data_type: TIMESTAMP
+          - name: batch_id
+            description: Airflow DAG batch ID
+            data_type: VARCHAR
+          - name: payload
+            description: JSON payload fetched from PokeAPI
             data_type: JSON

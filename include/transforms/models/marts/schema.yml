@@ -127,7 +127,97 @@ models:
         tests:
           - accepted_values:
               values: ['S', 'A', 'B', 'C', 'D', 'F']
-  - name: mart_types    
+  - name: mart_generations
+    description: One row per Pokemon generation with its English display name
+    columns:
+      - name: poke_gen
+        data_type: INTEGER
+        description: The generation identifier
+        tests:
+          - unique
+          - not_null
+      - name: gen_name
+        data_type: VARCHAR
+        description: The generation's English display name (e.g. Generation I)
+        tests:
+          - not_null
+  - name: mart_version_groups
+    description: One row per version group with its generation
+    columns:
+      - name: version_group_id
+        data_type: INTEGER
+        description: The version group identifier
+        tests:
+          - unique
+          - not_null
+      - name: version_group_name
+        data_type: VARCHAR
+        description: The version group name (e.g. red-blue)
+        tests:
+          - not_null
+      - name: poke_gen
+        data_type: INTEGER
+        description: The generation this version group belongs to
+        tests:
+          - not_null
+  - name: mart_version_group_versions
+    description: Mapping of individual game versions to their version groups
+    columns:
+      - name: version_id
+        data_type: INTEGER
+        description: The version identifier
+        tests:
+          - unique
+          - not_null
+      - name: version_name
+        data_type: VARCHAR
+        description: The version name (e.g. red)
+        tests:
+          - not_null
+      - name: version_group_id
+        data_type: INTEGER
+        description: Foreign key to mart_version_groups
+        tests:
+          - not_null
+  - name: mart_pokemon_moves
+    description: One row per pokemon x move x version group x learn method
+    columns:
+      - name: pokemon_move_id
+        data_type: VARCHAR
+        description: Surrogate key (poke_id, move_id, version_group_id, learn_method)
+        tests:
+          - unique
+          - not_null
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+        tests:
+          - not_null
+      - name: move_id
+        data_type: INTEGER
+        description: The move identifier
+        tests:
+          - not_null
+      - name: version_group_id
+        data_type: INTEGER
+        description: Foreign key to mart_version_groups
+        tests:
+          - not_null
+      - name: learn_method
+        data_type: VARCHAR
+        description: How the move is learned (level-up, machine, tutor, egg)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['level-up', 'machine', 'tutor', 'egg', 'stadium-surfing-pikachu', 'light-ball-egg', 'form-change', 'zygarde-cube']
+      - name: level_learned_at
+        data_type: INTEGER
+        description: Level at which the move is learned (0 if not level-up)
+        tests:
+          - min_value:
+              arguments:
+                min_val: 0
+  - name: mart_types
     description: Full type history per pokemon per slot, with generation-based validity windows
     columns:
       - name: type_id

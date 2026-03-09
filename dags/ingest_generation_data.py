@@ -18,30 +18,29 @@ from include.callbacks import notify_on_failure
 
 LOG = logging.getLogger(__name__)
 
-
 # --------------------------------------------------------------------------------
 # Asset
 # --------------------------------------------------------------------------------
 
-pokemon_catalogue_raw_asset = Asset("motherduck://raw/pokemon_catalogue")
+generation_data_raw_asset = Asset("motherduck://raw/generation_data")
 
 # --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
 @dag(
-    dag_id="poke_catalogue",
+    dag_id="ingest_generation_data",
     start_date=datetime(2026, 2, 15),
-    schedule="@weekly",
+    schedule=None,
     catchup=False,
-    tags=["pokemon_catalogue", "elt", "ingest"],
+    tags=["generation", "elt", "ingest"],
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),
     },
     on_failure_callback=notify_on_failure,
 )
-def pokemon_catalogue_etl():
+def ingest_generation_data():
 
     @task.sensor(poke_interval=60, timeout=300)
     def api_check():
@@ -54,7 +53,7 @@ def pokemon_catalogue_etl():
                 return PokeReturnValue(is_done=True)
             else:
                 return PokeReturnValue(is_done=False)
-        except requests.RequestException as e:
+        except requests.RequestException:
             return PokeReturnValue(is_done=False)
 
     @task
@@ -65,21 +64,23 @@ def pokemon_catalogue_etl():
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             con.execute(
-                "DELETE FROM raw.pokemon_catalogue WHERE batch_id = ?",
+                "DELETE FROM raw.generation_data WHERE batch_id = ?",
                 [run_id],
             )
         finally:
             con.close()
 
     @task
-    def fetch_and_import_gen_pokemons(generation):
-        """
-        Extract all pokemons of a generation
-        Args:
-            - generation: int
-        Returns:
-            - pokemons: list
-        """
+    def get_generation_ids():
+        """Fetch the generation list endpoint and return a list of IDs"""
+        resp = requests.get('https://pokeapi.co/api/v2/generation/', timeout=15)
+        resp.raise_for_status()
+        count = resp.json()["count"]
+        return list(range(1, count + 1))
+
+    @task
+    def fetch_and_import_generation(generation):
+        """Fetch a single generation's data and insert into raw"""
         import pyarrow as pa
         import json
 
@@ -93,17 +94,17 @@ def pokemon_catalogue_etl():
             resp = requests.get(endpoint, timeout=15)
             resp.raise_for_status()
             data = resp.json()
-        except requests.RequestException as e:
-            LOG.info(f"Could not fetch Gen {generation} pokemons!")
+        except requests.RequestException:
+            LOG.info(f"Could not fetch generation {generation}!")
             raise
-        
-        # only fetching whats relevant for this dag
+
         data_subset = {
             "fetch_date": fetch_date,
             "batch_id": run_id,
             "payload": json.dumps({
                 "id": data["id"],
-                "pokemon_species": data["pokemon_species"]
+                "name": data["name"],
+                "names": data["names"],
             })
         }
 
@@ -122,30 +123,22 @@ def pokemon_catalogue_etl():
         try:
             con.register("arrow_table", arrow_table)
             con.execute("""
-                INSERT INTO raw.pokemon_catalogue
+                INSERT INTO raw.generation_data
                 SELECT fetch_date, batch_id, payload::JSON
                 FROM arrow_table
             """)
         finally:
             con.close()
 
-    @task
-    def get_generation_ids():
-        """Fetch the generation list endpoint and return a list of IDs"""
-        resp = requests.get('https://pokeapi.co/api/v2/generation/', timeout=15)
-        resp.raise_for_status()
-        count = resp.json()["count"]
-        return list(range(1, count + 1))
-
-    @task(outlets=[pokemon_catalogue_raw_asset])
-    def mark_catalogue_complete():
+    @task(outlets=[generation_data_raw_asset])
+    def mark_generation_complete():
         LOG.info("All generations ingested successfully.")
 
     check = api_check()
     cleanup = cleanup_previous_batch()
     gen_ids = get_generation_ids()
-    fetch_tasks = fetch_and_import_gen_pokemons.expand(generation=gen_ids)
+    fetch_tasks = fetch_and_import_generation.expand(generation=gen_ids)
 
-    check >> cleanup >> gen_ids >> fetch_tasks >> mark_catalogue_complete()
+    check >> cleanup >> gen_ids >> fetch_tasks >> mark_generation_complete()
 
-pokemon_catalogue_etl()
+ingest_generation_data()

@@ -4,5 +4,5 @@
 SELECT
     fetch_date,
     id as poke_id,
-    raw->'$.moves' AS moves
+    payload->'$.moves' AS moves
 FROM {{ source('raw', 'pokemon_data') }}

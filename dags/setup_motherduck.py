@@ -47,7 +47,7 @@ def setup_motherduck():
                 CREATE TABLE IF NOT EXISTS raw.pokemon_catalogue (
                     fetch_date TIMESTAMP,
                     batch_id VARCHAR,
-                    raw JSON
+                    payload JSON
                 )
             """)
             LOG.info("Table 'raw.pokemon_catalogue' ready.")
@@ -63,17 +63,49 @@ def setup_motherduck():
                     id INTEGER,
                     fetch_date TIMESTAMP,
                     batch_id VARCHAR,
-                    raw JSON
+                    payload JSON
                 )
             """)
             LOG.info("Table 'raw.pokemon_data' ready.")
         finally:
             con.close()
 
+    @task
+    def create_raw_generation_data():
+        con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
+        try:
+            con.execute("""
+                CREATE TABLE IF NOT EXISTS raw.generation_data (
+                    fetch_date TIMESTAMP,
+                    batch_id VARCHAR,
+                    payload JSON
+                )
+            """)
+            LOG.info("Table 'raw.generation_data' ready.")
+        finally:
+            con.close()
+
+    @task
+    def create_raw_version_group_data():
+        con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
+        try:
+            con.execute("""
+                CREATE TABLE IF NOT EXISTS raw.version_group_data (
+                    fetch_date TIMESTAMP,
+                    batch_id VARCHAR,
+                    payload JSON
+                )
+            """)
+            LOG.info("Table 'raw.version_group_data' ready.")
+        finally:
+            con.close()
+
     schemas = create_schemas()
     catalogue_table = create_raw_pokemon_catalogue()
     data_table = create_raw_pokemon_data()
+    generation_table = create_raw_generation_data()
+    version_group_table = create_raw_version_group_data()
 
-    schemas >> [catalogue_table, data_table]
+    schemas >> [catalogue_table, data_table, generation_table, version_group_table]
 
 setup_motherduck()

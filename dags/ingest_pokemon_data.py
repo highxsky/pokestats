@@ -119,7 +119,7 @@ def pokemon_etl():
                     "id": int(pokemon_id),
                     "fetch_date": fetch_date,
                     "batch_id": run_id,
-                    "raw": json.dumps(data)
+                    "payload": json.dumps(data)
                 })
 
             except requests.RequestException as e:
@@ -131,7 +131,7 @@ def pokemon_etl():
                 pa.field("id", pa.int32()),
                 pa.field("fetch_date", pa.string()),
                 pa.field("batch_id", pa.string()),
-                pa.field("raw", pa.large_string()),
+                pa.field("payload", pa.large_string()),
             ])
 
             arrow_table = pa.Table.from_pylist(pokemon_list, schema=schema)
@@ -141,7 +141,7 @@ def pokemon_etl():
                 con.register("arrow_table", arrow_table)
                 con.execute("""
                     INSERT INTO raw.pokemon_data
-                    SELECT id, fetch_date, batch_id, raw::JSON
+                    SELECT id, fetch_date, batch_id, payload::JSON
                     FROM arrow_table
                     WHERE id NOT IN (SELECT id FROM raw.pokemon_data)
                 """)

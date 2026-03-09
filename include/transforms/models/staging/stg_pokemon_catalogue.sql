@@ -4,8 +4,8 @@
 WITH raw_input AS (
   SELECT
     fetch_date,
-    cast(raw->'$.id' AS INT) AS poke_gen,
-    raw->'$.pokemon_species' AS pkm_species
+    cast(payload->'$.id' AS INT) AS poke_gen,
+    payload->'$.pokemon_species' AS pkm_species
   FROM {{ source('raw', 'pokemon_catalogue') }}
 )
 

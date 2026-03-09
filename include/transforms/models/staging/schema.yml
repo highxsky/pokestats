@@ -73,6 +73,40 @@ models:
         data_type: INTEGER
       - name: types
         data_type: JSON
+  - name: stg_generations
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when the generation was fetched
+      - name: poke_gen
+        data_type: INTEGER
+        description: The generation identifier
+      - name: gen_api_name
+        data_type: VARCHAR
+        description: The generation's API name (e.g. generation-i)
+      - name: gen_name
+        data_type: VARCHAR
+        description: The generation's English display name (e.g. Generation I)
+  - name: stg_version_groups
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when the version group was fetched
+      - name: version_group_id
+        data_type: INTEGER
+        description: The version group identifier
+      - name: version_group_name
+        data_type: VARCHAR
+        description: The version group name (e.g. red-blue)
+      - name: poke_gen
+        data_type: INTEGER
+        description: The generation this version group belongs to
+      - name: version_id
+        data_type: INTEGER
+        description: The version identifier
+      - name: version_name
+        data_type: VARCHAR
+        description: The version name (e.g. red)
   - name: stg_pokemon_catalogue
     columns:
       - name: fetch_date

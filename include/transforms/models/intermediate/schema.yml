@@ -73,6 +73,29 @@ models:
         data_type: INTEGER
       - name: type
         data_type: VARCHAR
+  - name: int_moves
+    columns:
+      - name: pokemon_move_id
+        data_type: VARCHAR
+        description: Surrogate key (poke_id, move_id, version_group_id, learn_method)
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+      - name: move_id
+        data_type: INTEGER
+        description: The move identifier (parsed from URL)
+      - name: version_group_id
+        data_type: INTEGER
+        description: The version group identifier (parsed from URL)
+      - name: learn_method
+        data_type: VARCHAR
+        description: How the move is learned (level-up, machine, tutor, egg)
+      - name: level_learned_at
+        data_type: INTEGER
+        description: Level at which the move is learned (0 if not level-up)
   - name: int_type_history
     columns:
       - name: type_id

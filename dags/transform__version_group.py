@@ -20,24 +20,24 @@ DBT_PROJECT_PATH = Path(__file__).parent.parent / "include" / "transforms"
 # Asset
 # --------------------------------------------------------------------------------
 
-version_group_data_raw_asset = Asset("motherduck://raw/version_groups")
+version_groups_raw_asset = Asset("motherduck://raw/version_groups")
 
 # --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
-dbt_version_group_data = DbtDag(
-    dag_id="transform__version_group_data",
+dbt_version_groups = DbtDag(
+    dag_id="transform__version_groups",
     start_date=datetime(2026, 2, 15),
-    schedule=version_group_data_raw_asset,
+    schedule=version_groups_raw_asset,
     catchup=False,
     tags=["layer:transform", "entity:version_group", "tool:dbt"],
     doc_md="""
-## Step 8 — transform__version_group_data
+## Step 8 — transform__version_groups
 
 Runs all dbt models downstream of `raw.version_groups`.
 
-**Trigger:** asset `raw/version_groups` (set by `ingest__version_group_data`)
+**Trigger:** asset `raw/version_groups` (set by `ingest__version_groups`)
 **Triggers next:** nothing (end of the version group pipeline)
 """,
     default_args={
@@ -55,6 +55,7 @@ Runs all dbt models downstream of `raw.version_groups`.
     ),
     render_config=RenderConfig(
         select=["source:raw.version_groups+"],
+        exclude=["mart_pokemon_moves"],
     ),
     operator_args={
         "on_failure_callback": notify_on_failure,

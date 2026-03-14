@@ -22,27 +22,27 @@ LOG = logging.getLogger(__name__)
 # Asset
 # --------------------------------------------------------------------------------
 
-generation_data_raw_asset = Asset("motherduck://raw/generations")
+version_groups_raw_asset = Asset("motherduck://raw/version_groups")
 
 # --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
 @dag(
-    dag_id="ingest__generation_data",
+    dag_id="ingest__version_groups",
     start_date=datetime(2026, 2, 15),
     schedule=None,
     catchup=False,
-    tags=["layer:ingest", "entity:generation", "tool:pokeapi"],
+    tags=["layer:ingest", "entity:version_group", "tool:pokeapi"],
     doc_md="""
-## Step 5 — ingest__generation_data
+## Step 7 — ingest__version_groups
 
-Fetches all generations from PokeAPI and loads them into `raw.generations`.
-Generations are static data (new one roughly every 2 years) — trigger manually
-when a new game generation is released.
+Fetches all version groups from PokeAPI and loads them into `raw.version_groups`.
+Version groups are tied to generations — trigger manually alongside `ingest__generations`
+when a new generation is released.
 
 **Trigger:** manual
-**Triggers next:** `transform__generation_data` (via asset `raw/generations`)
+**Triggers next:** `transform__version_groups` (via asset `raw/version_groups`)
 """,
     default_args={
         "retries": 2,
@@ -50,7 +50,7 @@ when a new game generation is released.
     },
     on_failure_callback=notify_on_failure,
 )
-def ingest_generation_data():
+def ingest_version_groups():
 
     @task.sensor(poke_interval=60, timeout=300)
     def api_check():
@@ -67,30 +67,37 @@ def ingest_generation_data():
             return PokeReturnValue(is_done=False)
 
     @task
-    def cleanup_previous_batch():
-        """Delete any rows from a previous attempt of this DAG run"""
-        context = get_current_context()
-        run_id = context["dag_run"].run_id
+    def get_missing_version_group_ids():
+        """Return only version group IDs not yet in raw.version_groups"""
+        resp = requests.get(
+            'https://pokeapi.co/api/v2/version-group/?limit=100',
+            timeout=15,
+        )
+        resp.raise_for_status()
+        api_count = resp.json()["count"]
+
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
-            con.execute(
-                "DELETE FROM raw.generations WHERE batch_id = ?",
-                [run_id],
-            )
+            db_count = con.execute("SELECT COUNT(*) FROM raw.version_groups").fetchone()[0]
         finally:
             con.close()
 
-    @task
-    def get_generation_ids():
-        """Fetch the generation list endpoint and return a list of IDs"""
-        resp = requests.get('https://pokeapi.co/api/v2/generation/', timeout=15)
-        resp.raise_for_status()
-        count = resp.json()["count"]
-        return list(range(1, count + 1))
+        if db_count >= api_count:
+            LOG.info(f"raw.version_groups has {db_count}/{api_count} — nothing to ingest.")
+            return []
+
+        missing = list(range(db_count + 1, api_count + 1))
+        LOG.info(f"raw.version_groups has {db_count}/{api_count} — ingesting IDs: {missing}")
+        return missing
+
+    @task.short_circuit
+    def check_if_ingestion_required(version_group_ids):
+        """Short-circuit if there are no missing version groups"""
+        return bool(version_group_ids)
 
     @task
-    def fetch_and_import_generation(generation):
-        """Fetch a single generation's data and insert into raw"""
+    def fetch_and_import_version_group(version_group_id):
+        """Fetch a single version group's data and insert into raw"""
         import pyarrow as pa
         import json
 
@@ -98,14 +105,14 @@ def ingest_generation_data():
         fetch_date = context["data_interval_end"].isoformat()
         run_id = context["dag_run"].run_id
 
-        endpoint = f'https://pokeapi.co/api/v2/generation/{generation}/'
+        endpoint = f'https://pokeapi.co/api/v2/version-group/{version_group_id}/'
 
         try:
             resp = requests.get(endpoint, timeout=15)
             resp.raise_for_status()
             data = resp.json()
         except requests.RequestException:
-            LOG.info(f"Could not fetch generation {generation}!")
+            LOG.info(f"Could not fetch version group {version_group_id}!")
             raise
 
         data_subset = {
@@ -114,7 +121,8 @@ def ingest_generation_data():
             "payload": json.dumps({
                 "id": data["id"],
                 "name": data["name"],
-                "names": data["names"],
+                "generation": data["generation"],
+                "versions": data["versions"],
             })
         }
 
@@ -133,22 +141,22 @@ def ingest_generation_data():
         try:
             con.register("arrow_table", arrow_table)
             con.execute("""
-                INSERT INTO raw.generations
+                INSERT INTO raw.version_groups
                 SELECT fetch_date, batch_id, payload::JSON
                 FROM arrow_table
             """)
         finally:
             con.close()
 
-    @task(outlets=[generation_data_raw_asset])
-    def mark_generation_complete():
-        LOG.info("All generations ingested successfully.")
+    @task(outlets=[version_groups_raw_asset])
+    def mark_version_group_complete():
+        LOG.info("All version groups ingested successfully.")
 
     check = api_check()
-    cleanup = cleanup_previous_batch()
-    gen_ids = get_generation_ids()
-    fetch_tasks = fetch_and_import_generation.expand(generation=gen_ids)
+    vg_ids = get_missing_version_group_ids()
+    gate = check_if_ingestion_required(vg_ids)
+    fetch_tasks = fetch_and_import_version_group.expand(version_group_id=vg_ids)
 
-    check >> cleanup >> gen_ids >> fetch_tasks >> mark_generation_complete()
+    check >> vg_ids >> gate >> fetch_tasks >> mark_version_group_complete()
 
-ingest_generation_data()
+ingest_version_groups()

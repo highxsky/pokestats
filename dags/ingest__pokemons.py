@@ -24,27 +24,27 @@ BATCH_SIZE = 50
 # --------------------------------------------------------------------------------
 
 pokemon_catalogue_stg_asset = Asset("motherduck://staging/stg_pokemon_catalogue")
-pokemon_data_raw_asset = Asset("motherduck://raw/pokemons")
+pokemons_raw_asset = Asset("motherduck://raw/pokemons")
 
 # --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
 @dag(
-    dag_id="ingest__pokemon_data",
+    dag_id="ingest__pokemons",
     start_date=datetime(2026, 2, 15),
     schedule=pokemon_catalogue_stg_asset,
     catchup=False,
-    tags=["layer:ingest", "entity:pokemon_data", "tool:pokeapi"],
+    tags=["layer:ingest", "entity:pokemons", "tool:pokeapi"],
     doc_md="""
-## Step 3 — ingest__pokemon_data
+## Step 3 — ingest__pokemons
 
 Reads `staging.stg_pokemon_catalogue` to identify pokemon not yet ingested,
 then fetches their full data from PokeAPI in batches of 50 into `raw.pokemons`.
 Re-runs automatically until all pokemon are ingested.
 
 **Trigger:** asset `staging/stg_pokemon_catalogue` (set by `transform__pokemon_catalogue`)
-**Triggers next:** `transform__pokemon_data` (via asset `raw/pokemons`)
+**Triggers next:** `transform__pokemons` (via asset `raw/pokemons`)
 """,
     default_args={
         "retries": 2,
@@ -105,8 +105,8 @@ def pokemon_etl():
     def select_pokemons_to_import(pokemon_ids_to_ingest):
         return pokemon_ids_to_ingest[:BATCH_SIZE]
 
-    @task(outlets=[pokemon_data_raw_asset])
-    def fetch_and_import_pokemon_data(pokemons_ids_to_ingest):
+    @task(outlets=[pokemons_raw_asset])
+    def fetch_and_import_pokemons(pokemons_ids_to_ingest):
         import json
         import pyarrow as pa
 
@@ -175,6 +175,6 @@ def pokemon_etl():
     batch = select_pokemons_to_import(not_ingested)
     gate >> batch
 
-    fetch_and_import_pokemon_data(batch)
+    fetch_and_import_pokemons(batch)
 
 pokemon_etl()

@@ -20,24 +20,24 @@ DBT_PROJECT_PATH = Path(__file__).parent.parent / "include" / "transforms"
 # Asset
 # --------------------------------------------------------------------------------
 
-pokemon_data_raw_asset = Asset("motherduck://raw/pokemons")
+pokemons_raw_asset = Asset("motherduck://raw/pokemons")
 
 # --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
-dbt_pokemon_data = DbtDag(
-    dag_id="transform__pokemon_data",
+dbt_pokemons = DbtDag(
+    dag_id="transform__pokemons",
     start_date=datetime(2026, 2, 15),
-    schedule=pokemon_data_raw_asset,
+    schedule=pokemons_raw_asset,
     catchup=False,
-    tags=["layer:transform", "entity:pokemon_data", "tool:dbt"],
+    tags=["layer:transform", "entity:pokemons", "tool:dbt"],
     doc_md="""
-## Step 4 — transform__pokemon_data
+## Step 4 — transform__pokemons
 
 Runs all dbt models downstream of `raw.pokemons` (staging → intermediate → marts).
 
-**Trigger:** asset `raw/pokemons` (set by `ingest__pokemon_data`)
+**Trigger:** asset `raw/pokemons` (set by `ingest__pokemons`)
 **Triggers next:** nothing (end of the pokemon pipeline)
 """,
     default_args={

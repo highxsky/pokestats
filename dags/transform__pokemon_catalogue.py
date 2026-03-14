@@ -39,7 +39,7 @@ dbt_pokemon_catalogue = DbtDag(
 Runs dbt model `stg_pokemon_catalogue` to clean and stage the raw catalogue.
 
 **Trigger:** asset `raw/pokemon_catalogue` (set by `ingest__pokemon_catalogue`)
-**Triggers next:** `ingest__pokemon_data` (via asset `staging/stg_pokemon_catalogue`)
+**Triggers next:** `ingest__pokemons` (via asset `staging/stg_pokemon_catalogue`)
 """,
     default_args={
         "retries": 2,

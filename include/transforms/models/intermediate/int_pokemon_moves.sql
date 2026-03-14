@@ -5,7 +5,7 @@ WITH source AS (
         fetch_date,
         poke_id,
         moves
-    FROM {{ ref('stg_moves') }}
+    FROM {{ ref('stg_pokemon_moves') }}
 ),
 
 parsed AS (

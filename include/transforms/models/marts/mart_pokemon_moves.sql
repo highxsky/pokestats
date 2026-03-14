@@ -1,7 +1,7 @@
-{{ mart_incremental_load_config('pokemon_move_id', 'int_moves') }}
+{{ mart_incremental_load_config('pokemon_move_id', 'int_pokemon_moves') }}
 
 WITH source AS (
-  SELECT * FROM {{ ref('int_moves') }}
+  SELECT * FROM {{ ref('int_pokemon_moves') }}
   {{ incremental_where() }}
 )
 

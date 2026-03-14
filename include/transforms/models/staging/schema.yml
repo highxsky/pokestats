@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: stg_moves
+  - name: stg_pokemon_moves
     columns:
       - name: fetch_date
         description: Datetime when a pokemon was fetched
@@ -171,6 +171,57 @@ models:
       - name: version_name
         data_type: VARCHAR
         description: The version name (e.g. red)
+        tests:
+          - not_null
+  - name: stg_move_details
+    columns:
+      - name: fetch_date
+        description: Datetime when the move was fetched
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+      - name: move_id
+        description: The move identifier
+        data_type: INTEGER
+        tests:
+          - unique
+          - not_null
+      - name: move_name
+        description: The move name (e.g. pound, tackle)
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: power
+        description: The move's base power (NULL for status moves)
+        data_type: INTEGER
+      - name: accuracy
+        description: The move's accuracy percentage (NULL for moves that can't miss)
+        data_type: INTEGER
+      - name: pp
+        description: Power points — number of times the move can be used
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: priority
+        description: Move priority bracket (-8 to +8, 0 is normal)
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: type
+        description: The move's elemental type (e.g. normal, fire)
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: damage_class
+        description: Physical, special, or status
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['physical', 'special', 'status']
+      - name: poke_gen
+        description: The generation this move was introduced in
+        data_type: INTEGER
         tests:
           - not_null
   - name: stg_pokemon_catalogue

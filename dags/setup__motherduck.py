@@ -64,7 +64,7 @@ def setup_motherduck():
             con.close()
 
     @task
-    def create_raw_pokemon_data():
+    def create_raw_pokemons():
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             con.execute("""
@@ -80,7 +80,7 @@ def setup_motherduck():
             con.close()
 
     @task
-    def create_raw_generation_data():
+    def create_raw_generations():
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             con.execute("""
@@ -95,7 +95,7 @@ def setup_motherduck():
             con.close()
 
     @task
-    def create_raw_version_group_data():
+    def create_raw_version_groups():
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             con.execute("""
@@ -109,12 +109,29 @@ def setup_motherduck():
         finally:
             con.close()
 
+    @task
+    def create_raw_moves():
+        con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
+        try:
+            con.execute("""
+                CREATE TABLE IF NOT EXISTS raw.moves (
+                    id INTEGER,
+                    fetch_date TIMESTAMP,
+                    batch_id VARCHAR,
+                    payload JSON
+                )
+            """)
+            LOG.info("Table 'raw.moves' ready.")
+        finally:
+            con.close()
+
     schemas = create_schemas()
     catalogue_table = create_raw_pokemon_catalogue()
-    data_table = create_raw_pokemon_data()
-    generation_table = create_raw_generation_data()
-    version_group_table = create_raw_version_group_data()
+    data_table = create_raw_pokemons()
+    generation_table = create_raw_generations()
+    version_group_table = create_raw_version_groups()
+    moves_table = create_raw_moves()
 
-    schemas >> [catalogue_table, data_table, generation_table, version_group_table]
+    schemas >> [catalogue_table, data_table, generation_table, version_group_table, moves_table]
 
 setup_motherduck()

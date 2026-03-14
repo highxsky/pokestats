@@ -32,6 +32,14 @@ dbt_generation_data = DbtDag(
     schedule=generation_data_raw_asset,
     catchup=False,
     tags=["layer:transform", "entity:generation", "tool:dbt"],
+    doc_md="""
+## Step 6 — transform__generation_data
+
+Runs all dbt models downstream of `raw.generation_data`.
+
+**Trigger:** asset `raw/generation_data` (set by `ingest__generation_data`)
+**Triggers next:** nothing (end of the generation pipeline)
+""",
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),

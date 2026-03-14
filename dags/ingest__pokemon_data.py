@@ -36,6 +36,16 @@ pokemon_data_raw_asset = Asset("motherduck://raw/pokemon_data")
     schedule=pokemon_catalogue_stg_asset,
     catchup=False,
     tags=["layer:ingest", "entity:pokemon_data", "tool:pokeapi"],
+    doc_md="""
+## Step 3 — ingest__pokemon_data
+
+Reads `staging.stg_pokemon_catalogue` to identify pokemon not yet ingested,
+then fetches their full data from PokeAPI in batches of 50 into `raw.pokemon_data`.
+Re-runs automatically until all pokemon are ingested.
+
+**Trigger:** asset `staging/stg_pokemon_catalogue` (set by `transform__pokemon_catalogue`)
+**Triggers next:** `transform__pokemon_data` (via asset `raw/pokemon_data`)
+""",
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),

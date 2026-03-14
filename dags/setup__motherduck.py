@@ -26,6 +26,15 @@ LOG = logging.getLogger(__name__)
     schedule=None,
     catchup=False,
     tags=["layer:setup", "tool:duckdb"],
+    doc_md="""
+## Step 0 — setup__motherduck
+
+One-time manual setup. Creates all raw schemas and tables in MotherDuck.
+
+**Trigger:** manual
+**Run this before:** anything else, on first deploy only
+**Triggers next:** nothing (run `ingest__pokemon_catalogue` manually after)
+""",
     on_failure_callback=notify_on_failure,
 )
 def setup_motherduck():

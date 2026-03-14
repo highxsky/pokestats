@@ -32,6 +32,14 @@ dbt_version_group_data = DbtDag(
     schedule=version_group_data_raw_asset,
     catchup=False,
     tags=["layer:transform", "entity:version_group", "tool:dbt"],
+    doc_md="""
+## Step 8 — transform__version_group_data
+
+Runs all dbt models downstream of `raw.version_group_data`.
+
+**Trigger:** asset `raw/version_group_data` (set by `ingest__version_group_data`)
+**Triggers next:** nothing (end of the version group pipeline)
+""",
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),

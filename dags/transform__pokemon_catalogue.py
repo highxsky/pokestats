@@ -33,6 +33,14 @@ dbt_pokemon_catalogue = DbtDag(
     schedule=pokemon_catalogue_raw_asset,
     catchup=False,
     tags=["layer:transform", "entity:pokemon_catalogue", "tool:dbt"],
+    doc_md="""
+## Step 2 — transform__pokemon_catalogue
+
+Runs dbt model `stg_pokemon_catalogue` to clean and stage the raw catalogue.
+
+**Trigger:** asset `raw/pokemon_catalogue` (set by `ingest__pokemon_catalogue`)
+**Triggers next:** `ingest__pokemon_data` (via asset `staging/stg_pokemon_catalogue`)
+""",
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),

@@ -35,6 +35,15 @@ pokemon_catalogue_raw_asset = Asset("motherduck://raw/pokemon_catalogue")
     schedule="@weekly",
     catchup=False,
     tags=["layer:ingest", "entity:pokemon_catalogue", "tool:pokeapi"],
+    doc_md="""
+## Step 1 — ingest__pokemon_catalogue
+
+Fetches the list of all pokemon species per generation from PokeAPI
+and loads them into `raw.pokemon_catalogue`.
+
+**Trigger:** @weekly
+**Triggers next:** `transform__pokemon_catalogue` (via asset `raw/pokemon_catalogue`)
+""",
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),

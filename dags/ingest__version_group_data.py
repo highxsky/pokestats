@@ -34,6 +34,16 @@ version_group_data_raw_asset = Asset("motherduck://raw/version_group_data")
     schedule=None,
     catchup=False,
     tags=["layer:ingest", "entity:version_group", "tool:pokeapi"],
+    doc_md="""
+## Step 7 — ingest__version_group_data
+
+Fetches all version groups from PokeAPI and loads them into `raw.version_group_data`.
+Version groups are tied to generations — trigger manually alongside `ingest__generation_data`
+when a new generation is released.
+
+**Trigger:** manual
+**Triggers next:** `transform__version_group_data` (via asset `raw/version_group_data`)
+""",
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),

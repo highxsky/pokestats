@@ -34,6 +34,16 @@ generation_data_raw_asset = Asset("motherduck://raw/generation_data")
     schedule=None,
     catchup=False,
     tags=["layer:ingest", "entity:generation", "tool:pokeapi"],
+    doc_md="""
+## Step 5 — ingest__generation_data
+
+Fetches all generations from PokeAPI and loads them into `raw.generation_data`.
+Generations are static data (new one roughly every 2 years) — trigger manually
+when a new game generation is released.
+
+**Trigger:** manual
+**Triggers next:** `transform__generation_data` (via asset `raw/generation_data`)
+""",
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),

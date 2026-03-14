@@ -32,6 +32,14 @@ dbt_pokemon_data = DbtDag(
     schedule=pokemon_data_raw_asset,
     catchup=False,
     tags=["layer:transform", "entity:pokemon_data", "tool:dbt"],
+    doc_md="""
+## Step 4 — transform__pokemon_data
+
+Runs all dbt models downstream of `raw.pokemon_data` (staging → intermediate → marts).
+
+**Trigger:** asset `raw/pokemon_data` (set by `ingest__pokemon_data`)
+**Triggers next:** nothing (end of the pokemon pipeline)
+""",
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),

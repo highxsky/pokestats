@@ -21,11 +21,11 @@ LOG = logging.getLogger(__name__)
 # --------------------------------------------------------------------------------
 
 @dag(
-    dag_id="setup_motherduck",
+    dag_id="setup__motherduck",
     start_date=datetime(2026, 2, 15),
     schedule=None,
     catchup=False,
-    tags=["setup", "motherduck"],
+    tags=["layer:setup", "tool:duckdb"],
     on_failure_callback=notify_on_failure,
 )
 def setup_motherduck():

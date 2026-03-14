@@ -30,11 +30,11 @@ pokemon_catalogue_raw_asset = Asset("motherduck://raw/pokemon_catalogue")
 # --------------------------------------------------------------------------------
 
 @dag(
-    dag_id="poke_catalogue",
+    dag_id="ingest__pokemon_catalogue",
     start_date=datetime(2026, 2, 15),
     schedule="@weekly",
     catchup=False,
-    tags=["pokemon_catalogue", "elt", "ingest"],
+    tags=["layer:ingest", "entity:pokemon_catalogue", "tool:pokeapi"],
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),

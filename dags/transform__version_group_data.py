@@ -20,18 +20,18 @@ DBT_PROJECT_PATH = Path(__file__).parent.parent / "include" / "transforms"
 # Asset
 # --------------------------------------------------------------------------------
 
-pokemon_data_raw_asset = Asset("motherduck://raw/pokemon_data")
+version_group_data_raw_asset = Asset("motherduck://raw/version_group_data")
 
 # --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
-dbt_pokemon_data = DbtDag(
-    dag_id="dbt_pokemon_data",
+dbt_version_group_data = DbtDag(
+    dag_id="transform__version_group_data",
     start_date=datetime(2026, 2, 15),
-    schedule=pokemon_data_raw_asset,
+    schedule=version_group_data_raw_asset,
     catchup=False,
-    tags=["pokemon_data", "elt", "dbt", "build"],
+    tags=["layer:transform", "entity:version_group", "tool:dbt"],
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),
@@ -46,7 +46,7 @@ dbt_pokemon_data = DbtDag(
         profiles_yml_filepath=DBT_PROJECT_PATH / "profiles.yml",
     ),
     render_config=RenderConfig(
-        select=["source:raw.pokemon_data+"],
+        select=["source:raw.version_group_data+"],
     ),
     operator_args={
         "on_failure_callback": notify_on_failure,

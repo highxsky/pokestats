@@ -31,11 +31,11 @@ pokemon_data_raw_asset = Asset("motherduck://raw/pokemon_data")
 # --------------------------------------------------------------------------------
 
 @dag(
-    dag_id="poke_api_to_raw",
+    dag_id="ingest__pokemon_data",
     start_date=datetime(2026, 2, 15),
     schedule=pokemon_catalogue_stg_asset,
     catchup=False,
-    tags=["pokemon_data", "elt", "ingest"],
+    tags=["layer:ingest", "entity:pokemon_data", "tool:pokeapi"],
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),

@@ -5,8 +5,8 @@
 from pathlib import Path
 from datetime import datetime, timedelta
 
-from airflow.sdk import Asset
-from cosmos import DbtDag, ProjectConfig, ProfileConfig, RenderConfig
+from airflow.sdk import dag
+from cosmos.operators.local import DbtSourceFreshnessLocalOperator
 
 from include.callbacks import notify_on_failure
 
@@ -17,38 +17,30 @@ from include.callbacks import notify_on_failure
 DBT_PROJECT_PATH = Path(__file__).parent.parent / "include" / "transforms"
 
 # --------------------------------------------------------------------------------
-# Asset
-# --------------------------------------------------------------------------------
-
-generation_data_raw_asset = Asset("motherduck://raw/generation_data")
-
-# --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
-dbt_generation_data = DbtDag(
-    dag_id="dbt_generation_data",
+@dag(
+    dag_id="check__source_freshness",
     start_date=datetime(2026, 2, 15),
-    schedule=generation_data_raw_asset,
+    schedule="@weekly",
     catchup=False,
-    tags=["generation", "elt", "dbt", "build"],
+    tags=["layer:quality", "tool:dbt"],
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),
     },
     on_failure_callback=notify_on_failure,
-    project_config=ProjectConfig(
-        dbt_project_path=DBT_PROJECT_PATH,
-    ),
-    profile_config=ProfileConfig(
+)
+def source_freshness():
+
+    DbtSourceFreshnessLocalOperator(
+        task_id="dbt_source_freshness",
+        project_dir=DBT_PROJECT_PATH,
         profile_name="transforms",
         target_name="dev",
         profiles_yml_filepath=DBT_PROJECT_PATH / "profiles.yml",
-    ),
-    render_config=RenderConfig(
-        select=["source:raw.generation_data+"],
-    ),
-    operator_args={
-        "on_failure_callback": notify_on_failure,
-    },
-)
+        on_failure_callback=notify_on_failure,
+    )
+
+source_freshness()

@@ -5,8 +5,8 @@
 from pathlib import Path
 from datetime import datetime, timedelta
 
-from airflow.sdk import dag
-from cosmos.operators.local import DbtSourceFreshnessLocalOperator
+from airflow.sdk import Asset
+from cosmos import DbtDag, ProjectConfig, ProfileConfig, RenderConfig
 
 from include.callbacks import notify_on_failure
 
@@ -17,30 +17,38 @@ from include.callbacks import notify_on_failure
 DBT_PROJECT_PATH = Path(__file__).parent.parent / "include" / "transforms"
 
 # --------------------------------------------------------------------------------
+# Asset
+# --------------------------------------------------------------------------------
+
+generation_data_raw_asset = Asset("motherduck://raw/generation_data")
+
+# --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
-@dag(
-    dag_id="source_freshness",
+dbt_generation_data = DbtDag(
+    dag_id="transform__generation_data",
     start_date=datetime(2026, 2, 15),
-    schedule="@weekly",
+    schedule=generation_data_raw_asset,
     catchup=False,
-    tags=["data_quality", "dbt", "freshness"],
+    tags=["layer:transform", "entity:generation", "tool:dbt"],
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),
     },
     on_failure_callback=notify_on_failure,
-)
-def source_freshness():
-
-    DbtSourceFreshnessLocalOperator(
-        task_id="dbt_source_freshness",
-        project_dir=DBT_PROJECT_PATH,
+    project_config=ProjectConfig(
+        dbt_project_path=DBT_PROJECT_PATH,
+    ),
+    profile_config=ProfileConfig(
         profile_name="transforms",
         target_name="dev",
         profiles_yml_filepath=DBT_PROJECT_PATH / "profiles.yml",
-        on_failure_callback=notify_on_failure,
-    )
-
-source_freshness()
+    ),
+    render_config=RenderConfig(
+        select=["source:raw.generation_data+"],
+    ),
+    operator_args={
+        "on_failure_callback": notify_on_failure,
+    },
+)

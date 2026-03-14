@@ -20,19 +20,18 @@ DBT_PROJECT_PATH = Path(__file__).parent.parent / "include" / "transforms"
 # Asset
 # --------------------------------------------------------------------------------
 
-pokemon_catalogue_raw_asset = Asset("motherduck://raw/pokemon_catalogue")
-pokemon_catalogue_stg_asset = Asset("motherduck://staging/stg_pokemon_catalogue")
+pokemon_data_raw_asset = Asset("motherduck://raw/pokemon_data")
 
 # --------------------------------------------------------------------------------
 # DAG
 # --------------------------------------------------------------------------------
 
-dbt_pokemon_catalogue = DbtDag(
-    dag_id="dbt_pokemon_catalogue",
+dbt_pokemon_data = DbtDag(
+    dag_id="transform__pokemon_data",
     start_date=datetime(2026, 2, 15),
-    schedule=pokemon_catalogue_raw_asset,
+    schedule=pokemon_data_raw_asset,
     catchup=False,
-    tags=["pokemon_catalogue", "elt", "dbt", "build"],
+    tags=["layer:transform", "entity:pokemon_data", "tool:dbt"],
     default_args={
         "retries": 2,
         "retry_delay": timedelta(minutes=3),
@@ -47,10 +46,9 @@ dbt_pokemon_catalogue = DbtDag(
         profiles_yml_filepath=DBT_PROJECT_PATH / "profiles.yml",
     ),
     render_config=RenderConfig(
-        select=["stg_pokemon_catalogue"],
+        select=["source:raw.pokemon_data+"],
     ),
     operator_args={
         "on_failure_callback": notify_on_failure,
-        "outlets": [pokemon_catalogue_stg_asset],
     },
 )

@@ -7,7 +7,7 @@ WITH raw_input AS (
     payload->>'$.name' AS version_group_name,
     cast(split_part(payload->'$.generation'->>'$.url', '/', -2) AS INT) AS poke_gen,
     payload->'$.versions' AS versions
-  FROM {{ source('raw', 'version_group_data') }}
+  FROM {{ source('raw', 'version_groups') }}
 )
 
 SELECT

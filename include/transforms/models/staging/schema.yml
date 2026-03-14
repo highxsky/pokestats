@@ -5,51 +5,86 @@ models:
       - name: fetch_date
         description: Datetime when a pokemon was fetched
         data_type: TIMESTAMP
+        tests:
+          - not_null
       - name: poke_id
         description: A pokemon's identifier
         data_type: INTEGER
+        tests:
+          - not_null
       - name: moves
         description: A pokemon's moves
         data_type: JSON
+        tests:
+          - not_null
   - name: stg_pokemons
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
       - name: poke_gen
         description: A pokemon's generation
         data_type: SMALLINT
+        tests:
+          - not_null
       - name: poke_id
         description: A pokemon's identifier
         data_type: INTEGER
+        tests:
+          - unique
+          - not_null
       - name: poke_name
         description: A pokemon's name
         data_type: VARCHAR
+        tests:
+          - not_null
       - name: height
         description: A pokemon's height (in meters)
         data_type: DOUBLE
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: weight
         description: A pokemon's weight (in kilograms)
         data_type: DOUBLE
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 10000
   - name: stg_stats
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
       - name: poke_id
         description: A pokemon's identifier
         data_type: INTEGER
+        tests:
+          - not_null
       - name: stats
         description: A pokemon's stats
         data_type: JSON
+        tests:
+          - not_null
   - name: stg_past_types
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
       - name: poke_id
         description: A pokemon's identifier
         data_type: INTEGER
+        tests:
+          - not_null
       - name: past_types
         description: A pokemon's past types
         data_type: JSON
@@ -58,9 +93,13 @@ models:
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
       - name: poke_id
         description: A pokemon's identifier
         data_type: INTEGER
+        tests:
+          - not_null
       - name: past_stats
         description: A pokemon's past stats
         data_type: JSON
@@ -69,55 +108,95 @@ models:
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
       - name: poke_id
         data_type: INTEGER
+        tests:
+          - not_null
       - name: types
         data_type: JSON
+        tests:
+          - not_null
   - name: stg_generations
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when the generation was fetched
+        tests:
+          - not_null
       - name: poke_gen
         data_type: INTEGER
         description: The generation identifier
+        tests:
+          - unique
+          - not_null
       - name: gen_api_name
         data_type: VARCHAR
         description: The generation's API name (e.g. generation-i)
+        tests:
+          - not_null
       - name: gen_name
         data_type: VARCHAR
         description: The generation's English display name (e.g. Generation I)
+        tests:
+          - not_null
   - name: stg_version_groups
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when the version group was fetched
+        tests:
+          - not_null
       - name: version_group_id
         data_type: INTEGER
         description: The version group identifier
+        tests:
+          - not_null
       - name: version_group_name
         data_type: VARCHAR
         description: The version group name (e.g. red-blue)
+        tests:
+          - not_null
       - name: poke_gen
         data_type: INTEGER
         description: The generation this version group belongs to
+        tests:
+          - not_null
       - name: version_id
         data_type: INTEGER
         description: The version identifier
+        tests:
+          - not_null
       - name: version_name
         data_type: VARCHAR
         description: The version name (e.g. red)
+        tests:
+          - not_null
   - name: stg_pokemon_catalogue
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
       - name: poke_gen
         data_type: INTEGER
         description: A pokemon's generation
+        tests:
+          - not_null
       - name: poke_name
         data_type: VARCHAR
         description: A pokemon's name
+        tests:
+          - not_null
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - poke_id
+            - fetch_date

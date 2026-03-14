@@ -20,7 +20,7 @@ DBT_PROJECT_PATH = Path(__file__).parent.parent / "include" / "transforms"
 # Asset
 # --------------------------------------------------------------------------------
 
-version_group_data_raw_asset = Asset("motherduck://raw/version_group_data")
+version_group_data_raw_asset = Asset("motherduck://raw/version_groups")
 
 # --------------------------------------------------------------------------------
 # DAG
@@ -35,9 +35,9 @@ dbt_version_group_data = DbtDag(
     doc_md="""
 ## Step 8 — transform__version_group_data
 
-Runs all dbt models downstream of `raw.version_group_data`.
+Runs all dbt models downstream of `raw.version_groups`.
 
-**Trigger:** asset `raw/version_group_data` (set by `ingest__version_group_data`)
+**Trigger:** asset `raw/version_groups` (set by `ingest__version_group_data`)
 **Triggers next:** nothing (end of the version group pipeline)
 """,
     default_args={
@@ -54,7 +54,7 @@ Runs all dbt models downstream of `raw.version_group_data`.
         profiles_yml_filepath=DBT_PROJECT_PATH / "profiles.yml",
     ),
     render_config=RenderConfig(
-        select=["source:raw.version_group_data+"],
+        select=["source:raw.version_groups+"],
     ),
     operator_args={
         "on_failure_callback": notify_on_failure,

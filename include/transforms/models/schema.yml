@@ -3,7 +3,7 @@ sources:
   - name: raw
     schema: raw
     tables:
-      - name: pokemon_data
+      - name: pokemons
         description: Pokemon's detailed data fetched from the PokeAPI in raw state
         loaded_at_field: fetch_date
         freshness:
@@ -38,7 +38,7 @@ sources:
           - name: payload
             description: JSON payload fetched from PokeAPI
             data_type: JSON
-      - name: version_group_data
+      - name: version_groups
         description: Version group data fetched from the PokeAPI in raw state
         loaded_at_field: fetch_date
         freshness:
@@ -54,7 +54,7 @@ sources:
           - name: payload
             description: JSON payload fetched from PokeAPI
             data_type: JSON
-      - name: generation_data
+      - name: generations
         description: Generation data fetched from the PokeAPI in raw state
         loaded_at_field: fetch_date
         freshness:

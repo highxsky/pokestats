@@ -5,4 +5,4 @@ SELECT
     fetch_date,
     id as poke_id,
     payload->'$.types' AS types
-FROM {{ source('raw', 'pokemon_data') }}
+FROM {{ source('raw', 'pokemons') }}

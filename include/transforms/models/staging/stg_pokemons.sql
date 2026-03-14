@@ -8,6 +8,6 @@ SELECT
     pd.payload->>'$.name' AS poke_name,
     ROUND(CAST(pd.payload->>'$.height' AS INT) / 10, 2) AS height,
     ROUND(CAST(pd.payload->>'$.weight' AS INT) / 10, 2) AS weight
-FROM {{ source('raw', 'pokemon_data') }} pd
+FROM {{ source('raw', 'pokemons') }} pd
 LEFT JOIN {{ ref('stg_pokemon_catalogue') }} pc
     ON pd.id = pc.poke_id

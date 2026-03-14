@@ -20,7 +20,7 @@ DBT_PROJECT_PATH = Path(__file__).parent.parent / "include" / "transforms"
 # Asset
 # --------------------------------------------------------------------------------
 
-pokemon_data_raw_asset = Asset("motherduck://raw/pokemon_data")
+pokemon_data_raw_asset = Asset("motherduck://raw/pokemons")
 
 # --------------------------------------------------------------------------------
 # DAG
@@ -35,9 +35,9 @@ dbt_pokemon_data = DbtDag(
     doc_md="""
 ## Step 4 — transform__pokemon_data
 
-Runs all dbt models downstream of `raw.pokemon_data` (staging → intermediate → marts).
+Runs all dbt models downstream of `raw.pokemons` (staging → intermediate → marts).
 
-**Trigger:** asset `raw/pokemon_data` (set by `ingest__pokemon_data`)
+**Trigger:** asset `raw/pokemons` (set by `ingest__pokemon_data`)
 **Triggers next:** nothing (end of the pokemon pipeline)
 """,
     default_args={
@@ -54,7 +54,7 @@ Runs all dbt models downstream of `raw.pokemon_data` (staging → intermediate �
         profiles_yml_filepath=DBT_PROJECT_PATH / "profiles.yml",
     ),
     render_config=RenderConfig(
-        select=["source:raw.pokemon_data+"],
+        select=["source:raw.pokemons+"],
     ),
     operator_args={
         "on_failure_callback": notify_on_failure,

@@ -6,7 +6,7 @@ WITH raw_input AS (
     cast(payload->>'$.id' AS INT) AS poke_gen,
     payload->>'$.name' AS gen_api_name,
     payload->'$.names' AS names
-  FROM {{ source('raw', 'generation_data') }}
+  FROM {{ source('raw', 'generations') }}
 )
 
 SELECT

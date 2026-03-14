@@ -5,12 +5,19 @@ models:
       - name: poke_gen
         data_type: SMALLINT
         description: A pokemon's generation
+        tests:
+          - not_null
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
+        tests:
+          - unique
+          - not_null
       - name: poke_name
         data_type: VARCHAR
         description: A pokemon's name
+        tests:
+          - not_null
       - name: height
         data_type: DOUBLE
         description: A pokemon's height (in meters)
@@ -30,6 +37,9 @@ models:
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
+        tests:
+          - unique
+          - not_null
       - name: hp
         data_type: INTEGER
         tests:
@@ -74,6 +84,10 @@ models:
                 max_value: 255
       - name: total_stat_points
         data_type: INTEGER
+        tests:
+          - min_value:
+              arguments:
+                min_val: 0
   - name: mart_strongest_pokemons
     description: All pokemons ranked from strongest to weakest by total stat points, with a tier label (S to F)
     columns:
@@ -179,6 +193,9 @@ models:
         description: Foreign key to mart_version_groups
         tests:
           - not_null
+          - relationships:
+              to: ref('mart_version_groups')
+              field: version_group_id
   - name: mart_pokemon_moves
     description: One row per pokemon x move x version group x learn method
     columns:
@@ -203,6 +220,9 @@ models:
         description: Foreign key to mart_version_groups
         tests:
           - not_null
+          - relationships:
+              to: ref('mart_version_groups')
+              field: version_group_id
       - name: learn_method
         data_type: VARCHAR
         description: How the move is learned (level-up, machine, tutor, egg)
@@ -229,18 +249,32 @@ models:
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
+        tests:
+          - not_null
       - name: type
         data_type: VARCHAR
         description: The type name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
       - name: slot
         data_type: INTEGER
         description: Type slot (1 = primary, 2 = secondary)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2]
       - name: is_primary_slot
         data_type: BOOLEAN
         description: True if this is the primary type slot
+        tests:
+          - not_null
       - name: valid_from_gen
         data_type: INTEGER
         description: The generation this type assignment became active (1 = from the very beginning)
+        tests:
+          - not_null
       - name: valid_to_gen
         data_type: INTEGER
         description: The last generation this type assignment was active (NULL = still current)

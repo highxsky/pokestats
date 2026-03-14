@@ -22,7 +22,7 @@ LOG = logging.getLogger(__name__)
 # Asset
 # --------------------------------------------------------------------------------
 
-version_group_data_raw_asset = Asset("motherduck://raw/version_group_data")
+version_group_data_raw_asset = Asset("motherduck://raw/version_groups")
 
 # --------------------------------------------------------------------------------
 # DAG
@@ -37,12 +37,12 @@ version_group_data_raw_asset = Asset("motherduck://raw/version_group_data")
     doc_md="""
 ## Step 7 — ingest__version_group_data
 
-Fetches all version groups from PokeAPI and loads them into `raw.version_group_data`.
+Fetches all version groups from PokeAPI and loads them into `raw.version_groups`.
 Version groups are tied to generations — trigger manually alongside `ingest__generation_data`
 when a new generation is released.
 
 **Trigger:** manual
-**Triggers next:** `transform__version_group_data` (via asset `raw/version_group_data`)
+**Triggers next:** `transform__version_group_data` (via asset `raw/version_groups`)
 """,
     default_args={
         "retries": 2,
@@ -74,7 +74,7 @@ def ingest_version_group_data():
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             con.execute(
-                "DELETE FROM raw.version_group_data WHERE batch_id = ?",
+                "DELETE FROM raw.version_groups WHERE batch_id = ?",
                 [run_id],
             )
         finally:
@@ -137,7 +137,7 @@ def ingest_version_group_data():
         try:
             con.register("arrow_table", arrow_table)
             con.execute("""
-                INSERT INTO raw.version_group_data
+                INSERT INTO raw.version_groups
                 SELECT fetch_date, batch_id, payload::JSON
                 FROM arrow_table
             """)

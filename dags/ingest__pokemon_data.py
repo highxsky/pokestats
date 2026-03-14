@@ -24,7 +24,7 @@ BATCH_SIZE = 50
 # --------------------------------------------------------------------------------
 
 pokemon_catalogue_stg_asset = Asset("motherduck://staging/stg_pokemon_catalogue")
-pokemon_data_raw_asset = Asset("motherduck://raw/pokemon_data")
+pokemon_data_raw_asset = Asset("motherduck://raw/pokemons")
 
 # --------------------------------------------------------------------------------
 # DAG
@@ -40,11 +40,11 @@ pokemon_data_raw_asset = Asset("motherduck://raw/pokemon_data")
 ## Step 3 — ingest__pokemon_data
 
 Reads `staging.stg_pokemon_catalogue` to identify pokemon not yet ingested,
-then fetches their full data from PokeAPI in batches of 50 into `raw.pokemon_data`.
+then fetches their full data from PokeAPI in batches of 50 into `raw.pokemons`.
 Re-runs automatically until all pokemon are ingested.
 
 **Trigger:** asset `staging/stg_pokemon_catalogue` (set by `transform__pokemon_catalogue`)
-**Triggers next:** `transform__pokemon_data` (via asset `raw/pokemon_data`)
+**Triggers next:** `transform__pokemon_data` (via asset `raw/pokemons`)
 """,
     default_args={
         "retries": 2,
@@ -87,7 +87,7 @@ def pokemon_etl():
         try:
             to_ingest_df = con.execute("""
                 SELECT pc.poke_id FROM staging.stg_pokemon_catalogue pc
-                ANTI JOIN raw.pokemon_data pd
+                ANTI JOIN raw.pokemons pd
                     ON pc.poke_id = pd.id
             """).df()
 
@@ -150,10 +150,10 @@ def pokemon_etl():
             try:
                 con.register("arrow_table", arrow_table)
                 con.execute("""
-                    INSERT INTO raw.pokemon_data
+                    INSERT INTO raw.pokemons
                     SELECT id, fetch_date, batch_id, payload::JSON
                     FROM arrow_table
-                    WHERE id NOT IN (SELECT id FROM raw.pokemon_data)
+                    WHERE id NOT IN (SELECT id FROM raw.pokemons)
                 """)
             finally:
                 con.close()

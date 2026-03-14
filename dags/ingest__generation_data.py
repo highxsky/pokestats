@@ -22,7 +22,7 @@ LOG = logging.getLogger(__name__)
 # Asset
 # --------------------------------------------------------------------------------
 
-generation_data_raw_asset = Asset("motherduck://raw/generation_data")
+generation_data_raw_asset = Asset("motherduck://raw/generations")
 
 # --------------------------------------------------------------------------------
 # DAG
@@ -37,12 +37,12 @@ generation_data_raw_asset = Asset("motherduck://raw/generation_data")
     doc_md="""
 ## Step 5 — ingest__generation_data
 
-Fetches all generations from PokeAPI and loads them into `raw.generation_data`.
+Fetches all generations from PokeAPI and loads them into `raw.generations`.
 Generations are static data (new one roughly every 2 years) — trigger manually
 when a new game generation is released.
 
 **Trigger:** manual
-**Triggers next:** `transform__generation_data` (via asset `raw/generation_data`)
+**Triggers next:** `transform__generation_data` (via asset `raw/generations`)
 """,
     default_args={
         "retries": 2,
@@ -74,7 +74,7 @@ def ingest_generation_data():
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             con.execute(
-                "DELETE FROM raw.generation_data WHERE batch_id = ?",
+                "DELETE FROM raw.generations WHERE batch_id = ?",
                 [run_id],
             )
         finally:
@@ -133,7 +133,7 @@ def ingest_generation_data():
         try:
             con.register("arrow_table", arrow_table)
             con.execute("""
-                INSERT INTO raw.generation_data
+                INSERT INTO raw.generations
                 SELECT fetch_date, batch_id, payload::JSON
                 FROM arrow_table
             """)

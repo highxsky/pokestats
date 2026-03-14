@@ -20,7 +20,7 @@ DBT_PROJECT_PATH = Path(__file__).parent.parent / "include" / "transforms"
 # Asset
 # --------------------------------------------------------------------------------
 
-generation_data_raw_asset = Asset("motherduck://raw/generation_data")
+generation_data_raw_asset = Asset("motherduck://raw/generations")
 
 # --------------------------------------------------------------------------------
 # DAG
@@ -35,9 +35,9 @@ dbt_generation_data = DbtDag(
     doc_md="""
 ## Step 6 — transform__generation_data
 
-Runs all dbt models downstream of `raw.generation_data`.
+Runs all dbt models downstream of `raw.generations`.
 
-**Trigger:** asset `raw/generation_data` (set by `ingest__generation_data`)
+**Trigger:** asset `raw/generations` (set by `ingest__generation_data`)
 **Triggers next:** nothing (end of the generation pipeline)
 """,
     default_args={
@@ -54,7 +54,7 @@ Runs all dbt models downstream of `raw.generation_data`.
         profiles_yml_filepath=DBT_PROJECT_PATH / "profiles.yml",
     ),
     render_config=RenderConfig(
-        select=["source:raw.generation_data+"],
+        select=["source:raw.generations+"],
     ),
     operator_args={
         "on_failure_callback": notify_on_failure,

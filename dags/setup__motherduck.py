@@ -68,14 +68,14 @@ def setup_motherduck():
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             con.execute("""
-                CREATE TABLE IF NOT EXISTS raw.pokemon_data (
+                CREATE TABLE IF NOT EXISTS raw.pokemons (
                     id INTEGER,
                     fetch_date TIMESTAMP,
                     batch_id VARCHAR,
                     payload JSON
                 )
             """)
-            LOG.info("Table 'raw.pokemon_data' ready.")
+            LOG.info("Table 'raw.pokemons' ready.")
         finally:
             con.close()
 
@@ -84,13 +84,13 @@ def setup_motherduck():
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             con.execute("""
-                CREATE TABLE IF NOT EXISTS raw.generation_data (
+                CREATE TABLE IF NOT EXISTS raw.generations (
                     fetch_date TIMESTAMP,
                     batch_id VARCHAR,
                     payload JSON
                 )
             """)
-            LOG.info("Table 'raw.generation_data' ready.")
+            LOG.info("Table 'raw.generations' ready.")
         finally:
             con.close()
 
@@ -99,13 +99,13 @@ def setup_motherduck():
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             con.execute("""
-                CREATE TABLE IF NOT EXISTS raw.version_group_data (
+                CREATE TABLE IF NOT EXISTS raw.version_groups (
                     fetch_date TIMESTAMP,
                     batch_id VARCHAR,
                     payload JSON
                 )
             """)
-            LOG.info("Table 'raw.version_group_data' ready.")
+            LOG.info("Table 'raw.version_groups' ready.")
         finally:
             con.close()
 

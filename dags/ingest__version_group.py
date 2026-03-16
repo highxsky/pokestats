@@ -157,6 +157,8 @@ def ingest_version_groups():
     gate = check_if_ingestion_required(vg_ids)
     fetch_tasks = fetch_and_import_version_group.expand(version_group_id=vg_ids)
 
-    check >> vg_ids >> gate >> fetch_tasks >> mark_version_group_complete()
+    done = mark_version_group_complete()
+    check >> vg_ids >> gate >> fetch_tasks >> done
+    gate >> done
 
 ingest_version_groups()

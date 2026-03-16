@@ -153,6 +153,8 @@ def ingest_generations():
     gate = check_if_ingestion_required(gen_ids)
     fetch_tasks = fetch_and_import_generation.expand(generation=gen_ids)
 
-    check >> gen_ids >> gate >> fetch_tasks >> mark_generation_complete()
+    done = mark_generation_complete()
+    check >> gen_ids >> gate >> fetch_tasks >> done
+    gate >> done
 
 ingest_generations()

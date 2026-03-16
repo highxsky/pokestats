@@ -105,7 +105,7 @@ def pokemon_etl():
     def select_pokemons_to_import(pokemon_ids_to_ingest):
         return pokemon_ids_to_ingest[:BATCH_SIZE]
 
-    @task(outlets=[pokemons_raw_asset])
+    @task
     def fetch_and_import_pokemons(pokemons_ids_to_ingest):
         import json
         import pyarrow as pa
@@ -161,6 +161,10 @@ def pokemon_etl():
         if failed_ids:
             raise RuntimeError(f"Failed to fetch {len(failed_ids)} pokemon(s): {failed_ids}")
 
+    @task(outlets=[pokemons_raw_asset], trigger_rule="all_done")
+    def mark_pokemons_complete():
+        LOG.info("Pokemons ingestion DAG completed.")
+
     # API test call, then checks for catalogue
     check_api = api_check()
     check_cat = catalogue_check()
@@ -175,6 +179,6 @@ def pokemon_etl():
     batch = select_pokemons_to_import(not_ingested)
     gate >> batch
 
-    fetch_and_import_pokemons(batch)
+    fetch_and_import_pokemons(batch) >> mark_pokemons_complete()
 
 pokemon_etl()

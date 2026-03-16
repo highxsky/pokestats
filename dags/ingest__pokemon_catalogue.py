@@ -146,7 +146,7 @@ def pokemon_catalogue_etl():
         count = resp.json()["count"]
         return list(range(1, count + 1))
 
-    @task(outlets=[pokemon_catalogue_raw_asset])
+    @task(outlets=[pokemon_catalogue_raw_asset], trigger_rule="all_done")
     def mark_catalogue_complete():
         LOG.info("All generations ingested successfully.")
 

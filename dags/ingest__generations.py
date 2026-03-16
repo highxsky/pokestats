@@ -144,7 +144,7 @@ def ingest_generations():
         finally:
             con.close()
 
-    @task(outlets=[generations_raw_asset])
+    @task(outlets=[generations_raw_asset], trigger_rule="all_done")
     def mark_generation_complete():
         LOG.info("All generations ingested successfully.")
 

@@ -148,7 +148,7 @@ def ingest_version_groups():
         finally:
             con.close()
 
-    @task(outlets=[version_groups_raw_asset])
+    @task(outlets=[version_groups_raw_asset], trigger_rule="all_done")
     def mark_version_group_complete():
         LOG.info("All version groups ingested successfully.")
 

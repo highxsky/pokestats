@@ -104,7 +104,7 @@ def ingest_moves():
     def select_moves_to_import(move_ids):
         return move_ids[:BATCH_SIZE]
 
-    @task(outlets=[moves_raw_asset])
+    @task
     def fetch_and_import_moves(move_ids_to_ingest):
         """Fetch move detail data and insert into raw.moves"""
         import json
@@ -160,6 +160,10 @@ def ingest_moves():
         if failed_ids:
             raise RuntimeError(f"Failed to fetch {len(failed_ids)} move(s): {failed_ids}")
 
+    @task(outlets=[moves_raw_asset], trigger_rule="all_done")
+    def mark_moves_complete():
+        LOG.info("Moves ingestion DAG completed.")
+
     check = api_check()
     missing = get_missing_move_ids()
     gate = check_if_ingestion_required(missing)
@@ -167,6 +171,6 @@ def ingest_moves():
     gate >> batch
 
     check >> missing
-    fetch_and_import_moves(batch)
+    fetch_and_import_moves(batch) >> mark_moves_complete()
 
 ingest_moves()

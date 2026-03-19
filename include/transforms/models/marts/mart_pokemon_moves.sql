@@ -8,8 +8,5 @@ WITH source AS (
 SELECT
     pokemon_move_id,
     poke_id,
-    move_id,
-    version_group_id,
-    learn_method,
-    level_learned_at
+    move_id
 FROM source

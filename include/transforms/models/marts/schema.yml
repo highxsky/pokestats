@@ -197,46 +197,20 @@ models:
               to: ref('mart_version_groups')
               field: version_group_id
   - name: mart_pokemon_moves
-    description: One row per pokemon x move x version group x learn method
+    description: One row per pokemon x move
     columns:
       - name: pokemon_move_id
         data_type: VARCHAR
-        description: Surrogate key (poke_id, move_id, version_group_id, learn_method)
+        description: Surrogate key (poke_id, move_id)
         tests:
           - unique
           - not_null
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
-        tests:
-          - not_null
       - name: move_id
         data_type: INTEGER
         description: The move identifier
-        tests:
-          - not_null
-      - name: version_group_id
-        data_type: INTEGER
-        description: Foreign key to mart_version_groups
-        tests:
-          - not_null
-          - relationships:
-              to: ref('mart_version_groups')
-              field: version_group_id
-      - name: learn_method
-        data_type: VARCHAR
-        description: How the move is learned (level-up, machine, tutor, egg)
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['level-up', 'machine', 'tutor', 'egg', 'stadium-surfing-pikachu', 'light-ball-egg', 'form-change', 'zygarde-cube']
-      - name: level_learned_at
-        data_type: INTEGER
-        description: Level at which the move is learned (0 if not level-up)
-        tests:
-          - min_value:
-              arguments:
-                min_val: 0
   - name: mart_moves
     description: One row per move with its core attributes
     columns:

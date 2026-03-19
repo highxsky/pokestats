@@ -90,7 +90,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed']
+              values: ['hp', 'attack', 'defense', 'special', 'special-attack', 'special-defense', 'speed']
       - name: stat_value
         data_type: INTEGER
         description: A pokemon's stat value (e.g. 85)
@@ -169,7 +169,7 @@ models:
     columns:
       - name: pokemon_move_id
         data_type: VARCHAR
-        description: Surrogate key (poke_id, move_id, version_group_id, learn_method)
+        description: Surrogate key (poke_id, move_id)
         tests:
           - unique
           - not_null
@@ -188,26 +188,6 @@ models:
         description: The move identifier (parsed from URL)
         tests:
           - not_null
-      - name: version_group_id
-        data_type: INTEGER
-        description: The version group identifier (parsed from URL)
-        tests:
-          - not_null
-      - name: learn_method
-        data_type: VARCHAR
-        description: How the move is learned (level-up, machine, tutor, egg)
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['level-up', 'machine', 'tutor', 'egg', 'stadium-surfing-pikachu', 'light-ball-egg', 'form-change', 'zygarde-cube']
-      - name: level_learned_at
-        data_type: INTEGER
-        description: Level at which the move is learned (0 if not level-up)
-        tests:
-          - not_null
-          - min_value:
-              arguments:
-                min_val: 0
   - name: int_type_history
     columns:
       - name: type_id

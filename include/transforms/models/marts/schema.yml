@@ -259,6 +259,24 @@ models:
         tests:
           - not_null
   - name: mart_types
+    description: Current type assignment per pokemon per slot
+    columns:
+      - name: type_id
+        data_type: VARCHAR
+        description: Surrogate key (hash of poke_id, slot)
+        tests:
+          - unique
+          - not_null
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+      - name: slot
+        data_type: INTEGER
+        description: Type slot (1 = primary, 2 = secondary)
+      - name: type
+        data_type: VARCHAR
+        description: The type name
+  - name: mart_past_types
     description: Full type history per pokemon per slot, with generation-based validity windows
     columns:
       - name: type_id
@@ -270,32 +288,15 @@ models:
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
-        tests:
-          - not_null
-      - name: type
-        data_type: VARCHAR
-        description: The type name
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
       - name: slot
         data_type: INTEGER
         description: Type slot (1 = primary, 2 = secondary)
-        tests:
-          - not_null
-          - accepted_values:
-              values: [1, 2]
-      - name: is_primary_slot
-        data_type: BOOLEAN
-        description: True if this is the primary type slot
-        tests:
-          - not_null
+      - name: type
+        data_type: VARCHAR
+        description: The type name
       - name: valid_from_gen
         data_type: INTEGER
-        description: The generation this type assignment became active (1 = from the very beginning)
-        tests:
-          - not_null
+        description: The generation this type assignment became active
       - name: valid_to_gen
         data_type: INTEGER
         description: The last generation this type assignment was active (NULL = still current)

@@ -173,11 +173,6 @@ models:
         tests:
           - unique
           - not_null
-      - name: fetch_date
-        data_type: TIMESTAMP
-        description: Datetime when a pokemon was fetched
-        tests:
-          - not_null
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier

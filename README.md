@@ -99,6 +99,16 @@ Data flows through four layers:
 | | `mart_strongest_pokemons` | All pokemon ranked by total stats with tier labels |
 | | `mart_strongest_starters` | Starter pokemon ranked by total stats |
 
+## Documentation
+
+Detailed docs live in [`docs/`](docs/):
+
+- [**Architecture**](docs/architecture.md) — system design, stack decisions, design patterns
+- [**Data Dictionary**](docs/data-dictionary.md) — mart table schemas, relationships, query examples
+- [**DAG Reference**](docs/dag-reference.md) — operational runbook, failure remediation, re-run behavior
+- [**NL-to-SQL Design**](docs/nl-to-sql-design.md) — prompt architecture for the "Ask the Pokedex" feature
+- [**Local Dev**](docs/local-dev.md) — full development setup (dbt, Streamlit, connections)
+
 ## Project Structure
 
 ```
@@ -116,6 +126,9 @@ include/
     tests/                     #   custom data quality tests
     macros/                    #   shared SQL macros
   callbacks/                   # Airflow failure callbacks
+docs/                          # Architecture, data dictionary, runbooks
+nl_to_sql/                     # NL-to-SQL prompt engine (WIP)
+streamlit/                     # Streamlit app
 Dockerfile                     # Astronomer Runtime 3.1
 requirements.txt               # Python dependencies
 ```

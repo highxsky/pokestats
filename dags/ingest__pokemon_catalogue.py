@@ -24,6 +24,7 @@ LOG = logging.getLogger(__name__)
 # --------------------------------------------------------------------------------
 
 pokemon_catalogue_raw_asset = Asset("motherduck://raw/pokemon_catalogue")
+pokemon_ids_raw_asset = Asset("motherduck://raw/pokemon_ids")
 
 # --------------------------------------------------------------------------------
 # DAG
@@ -93,7 +94,7 @@ def pokemon_catalogue_etl():
         import json
 
         context = get_current_context()
-        fetch_date = context["data_interval_end"].isoformat()
+        fetch_date = context["logical_date"].isoformat()
         run_id = context["dag_run"].run_id
 
         endpoint = f'https://pokeapi.co/api/v2/generation/{generation}/'
@@ -127,8 +128,25 @@ def pokemon_catalogue_etl():
             schema=schema
         )
 
+        # Parse pokemon IDs from the species list
+        gen_id = data["id"]
+        pokemon_ids = [
+            int(species["url"].rstrip("/").split("/")[-1])
+            for species in data["pokemon_species"]
+        ]
+
+        ids_schema = pa.schema([
+            pa.field("poke_id", pa.int32()),
+            pa.field("poke_gen", pa.int32()),
+        ])
+        ids_table = pa.Table.from_pydict(
+            {"poke_id": pokemon_ids, "poke_gen": [gen_id] * len(pokemon_ids)},
+            schema=ids_schema,
+        )
+
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
+            # Write raw JSON payload (skip if generation already ingested)
             con.register("arrow_table", arrow_table)
             con.execute("""
                 INSERT INTO raw.pokemon_catalogue
@@ -137,6 +155,15 @@ def pokemon_catalogue_etl():
                 WHERE CAST(payload::JSON->>'$.id' AS INT) NOT IN (
                     SELECT CAST(payload->>'$.id' AS INT) FROM raw.pokemon_catalogue
                 )
+            """)
+
+            # Write flat pokemon ID lookup (skip if already exists)
+            con.register("ids_table", ids_table)
+            con.execute("""
+                INSERT INTO raw.pokemon_ids
+                SELECT poke_id, poke_gen
+                FROM ids_table
+                WHERE poke_id NOT IN (SELECT poke_id FROM raw.pokemon_ids)
             """)
         finally:
             con.close()
@@ -149,7 +176,7 @@ def pokemon_catalogue_etl():
         count = resp.json()["count"]
         return list(range(1, count + 1))
 
-    @task(outlets=[pokemon_catalogue_raw_asset], trigger_rule="all_done")
+    @task(outlets=[pokemon_catalogue_raw_asset, pokemon_ids_raw_asset], trigger_rule="all_done")
     def mark_catalogue_complete():
         LOG.info("All generations ingested successfully.")
 

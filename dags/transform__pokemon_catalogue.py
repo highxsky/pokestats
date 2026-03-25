@@ -21,7 +21,6 @@ DBT_PROJECT_PATH = Path(__file__).parent.parent / "include" / "transforms"
 # --------------------------------------------------------------------------------
 
 pokemon_catalogue_raw_asset = Asset("motherduck://raw/pokemon_catalogue")
-pokemon_catalogue_stg_asset = Asset("motherduck://staging/stg_pokemon_catalogue")
 
 # --------------------------------------------------------------------------------
 # DAG
@@ -39,7 +38,7 @@ dbt_pokemon_catalogue = DbtDag(
 Runs dbt model `stg_pokemon_catalogue` to clean and stage the raw catalogue.
 
 **Trigger:** asset `raw/pokemon_catalogue` (set by `ingest__pokemon_catalogue`)
-**Triggers next:** `ingest__pokemons` (via asset `staging/stg_pokemon_catalogue`)
+**Triggers next:** nothing (ingest DAGs now trigger via `raw/pokemon_ids`)
 """,
     default_args={
         "retries": 2,
@@ -59,6 +58,5 @@ Runs dbt model `stg_pokemon_catalogue` to clean and stage the raw catalogue.
     ),
     operator_args={
         "on_failure_callback": notify_on_failure,
-        "outlets": [pokemon_catalogue_stg_asset],
     },
 )

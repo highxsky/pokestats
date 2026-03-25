@@ -23,7 +23,7 @@ BATCH_SIZE = 50
 # Asset
 # --------------------------------------------------------------------------------
 
-pokemon_catalogue_stg_asset = Asset("motherduck://staging/stg_pokemon_catalogue")
+pokemon_ids_raw_asset = Asset("motherduck://raw/pokemon_ids")
 pokemons_raw_asset = Asset("motherduck://raw/pokemons")
 
 # --------------------------------------------------------------------------------
@@ -33,17 +33,17 @@ pokemons_raw_asset = Asset("motherduck://raw/pokemons")
 @dag(
     dag_id="ingest__pokemons",
     start_date=datetime(2026, 2, 15),
-    schedule=pokemon_catalogue_stg_asset,
+    schedule=pokemon_ids_raw_asset,
     catchup=False,
     tags=["layer:ingest", "entity:pokemons", "tool:pokeapi"],
     doc_md="""
 ## Step 3 — ingest__pokemons
 
-Reads `staging.stg_pokemon_catalogue` to identify pokemon not yet ingested,
+Reads `raw.pokemon_ids` to identify pokemon not yet ingested,
 then fetches their full data from PokeAPI in batches of 50 into `raw.pokemons`.
 Re-runs automatically until all pokemon are ingested.
 
-**Trigger:** asset `staging/stg_pokemon_catalogue` (set by `transform__pokemon_catalogue`)
+**Trigger:** asset `raw/pokemon_ids` (set by `ingest__pokemon_catalogue`)
 **Triggers next:** `transform__pokemons` (via asset `raw/pokemons`)
 """,
     default_args={
@@ -69,14 +69,16 @@ def pokemon_etl():
 
     @task.short_circuit
     def catalogue_check():
-        """Checks that the catalogue table exists and returns data"""
+        """Checks that raw.pokemon_ids has been populated"""
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             count = con.execute("""
-                SELECT COUNT(*) FROM staging.stg_pokemon_catalogue
+                SELECT COUNT(*) FROM raw.pokemon_ids
             """).fetchone()[0]
+            LOG.info(f"raw.pokemon_ids has {count} rows.")
             return count > 0
-        except Exception:
+        except Exception as e:
+            LOG.warning(f"catalogue_check failed: {e}")
             return False
         finally:
             con.close()
@@ -86,9 +88,9 @@ def pokemon_etl():
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             to_ingest_df = con.execute("""
-                SELECT pc.poke_id FROM staging.stg_pokemon_catalogue pc
+                SELECT pi.poke_id FROM raw.pokemon_ids pi
                 ANTI JOIN raw.pokemons pd
-                    ON pc.poke_id = pd.id
+                    ON pi.poke_id = pd.id
             """).df()
 
             pokemons_to_ingest = [int(pid) for pid in to_ingest_df["poke_id"].to_list()]
@@ -111,7 +113,7 @@ def pokemon_etl():
         import pyarrow as pa
 
         context = get_current_context()
-        fetch_date = context["data_interval_end"].isoformat()
+        fetch_date = context["logical_date"].isoformat()
         run_id = context["dag_run"].run_id
 
         pokemon_list = []

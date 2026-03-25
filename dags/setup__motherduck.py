@@ -141,14 +141,29 @@ def setup_motherduck():
         finally:
             con.close()
 
+    @task
+    def create_raw_pokemon_ids():
+        con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
+        try:
+            con.execute("""
+                CREATE TABLE IF NOT EXISTS raw.pokemon_ids (
+                    poke_id INTEGER,
+                    poke_gen INTEGER
+                )
+            """)
+            LOG.info("Table 'raw.pokemon_ids' ready.")
+        finally:
+            con.close()
+
     schemas = create_schemas()
     catalogue_table = create_raw_pokemon_catalogue()
+    ids_table = create_raw_pokemon_ids()
     data_table = create_raw_pokemons()
     generation_table = create_raw_generations()
     version_group_table = create_raw_version_groups()
     moves_table = create_raw_moves()
     species_table = create_raw_pokemon_species()
 
-    schemas >> [catalogue_table, data_table, generation_table, version_group_table, moves_table, species_table]
+    schemas >> [catalogue_table, ids_table, data_table, generation_table, version_group_table, moves_table, species_table]
 
 setup_motherduck()

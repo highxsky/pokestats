@@ -23,7 +23,7 @@ BATCH_SIZE = 100
 # Asset
 # --------------------------------------------------------------------------------
 
-pokemon_catalogue_stg_asset = Asset("motherduck://staging/stg_pokemon_catalogue")
+pokemon_ids_raw_asset = Asset("motherduck://raw/pokemon_ids")
 pokemon_species_raw_asset = Asset("motherduck://raw/pokemon_species")
 
 # --------------------------------------------------------------------------------
@@ -33,17 +33,17 @@ pokemon_species_raw_asset = Asset("motherduck://raw/pokemon_species")
 @dag(
     dag_id="ingest__pokemon_species",
     start_date=datetime(2026, 2, 15),
-    schedule=pokemon_catalogue_stg_asset,
+    schedule=pokemon_ids_raw_asset,
     catchup=False,
     tags=["layer:ingest", "entity:pokemon_species", "tool:pokeapi"],
     doc_md="""
 ## ingest__pokemon_species
 
-Reads `staging.stg_pokemon_catalogue` to identify pokemon species not yet ingested,
-then fetches their species data from PokeAPI in batches of 50 into `raw.pokemon_species`.
+Reads `raw.pokemon_ids` to identify pokemon species not yet ingested,
+then fetches their species data from PokeAPI in batches of 100 into `raw.pokemon_species`.
 Re-runs automatically until all species are ingested.
 
-**Trigger:** asset `staging/stg_pokemon_catalogue` (set by `transform__pokemon_catalogue`)
+**Trigger:** asset `raw/pokemon_ids` (set by `ingest__pokemon_catalogue`)
 **Triggers next:** `transform__pokemon_species` (via asset `raw/pokemon_species`)
 """,
     default_args={
@@ -69,14 +69,16 @@ def pokemon_species_etl():
 
     @task.short_circuit
     def catalogue_check():
-        """Checks that the catalogue table exists and returns data"""
+        """Checks that raw.pokemon_ids has been populated"""
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             count = con.execute("""
-                SELECT COUNT(*) FROM staging.stg_pokemon_catalogue
+                SELECT COUNT(*) FROM raw.pokemon_ids
             """).fetchone()[0]
+            LOG.info(f"raw.pokemon_ids has {count} rows.")
             return count > 0
-        except Exception:
+        except Exception as e:
+            LOG.warning(f"catalogue_check failed: {e}")
             return False
         finally:
             con.close()
@@ -86,9 +88,9 @@ def pokemon_species_etl():
         con = DuckDBHook(duckdb_conn_id='motherduck_conn').get_conn()
         try:
             to_ingest_df = con.execute("""
-                SELECT pc.poke_id FROM staging.stg_pokemon_catalogue pc
+                SELECT pi.poke_id FROM raw.pokemon_ids pi
                 ANTI JOIN raw.pokemon_species ps
-                    ON pc.poke_id = ps.id
+                    ON pi.poke_id = ps.id
             """).df()
 
             species_to_ingest = [int(pid) for pid in to_ingest_df["poke_id"].to_list()]
@@ -111,7 +113,7 @@ def pokemon_species_etl():
         import pyarrow as pa
 
         context = get_current_context()
-        fetch_date = context["data_interval_end"].isoformat()
+        fetch_date = context["logical_date"].isoformat()
         run_id = context["dag_run"].run_id
 
         species_list = []

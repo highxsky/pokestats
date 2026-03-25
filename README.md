@@ -9,27 +9,13 @@ A data pipeline that ingests Pokemon data from [PokeAPI](https://pokeapi.co), lo
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    API[PokeAPI] -->|REST| Ingest
-
-    subgraph Airflow["Airflow (Astronomer)"]
-        Ingest[Ingest DAGs] -->|raw JSON| MD[(MotherDuck)]
-        MD -->|asset trigger| Transform[Transform DAGs]
-        Transform -->|dbt build| MD
-    end
-
-    subgraph MotherDuck
-        direction TB
-        raw[raw schema] --> staging[staging views]
-        staging --> intermediate[intermediate views]
-        intermediate --> marts[mart tables]
-    end
-```
+See [docs/architecture.md](docs/architecture.md) for the system diagram, stack decisions, and design patterns.
 
 ## Overview
 
-The project fetches data for all 9 generations, 27 version groups, 1025 Pokemon, and 937 moves from PokeAPI. Each entity has its own ingest DAG that loads raw JSON payloads into MotherDuck, and a transform DAG that runs dbt models downstream. DAGs are chained via Airflow assets — ingestion completion triggers transformation automatically.
+The project fetches data for all 9 generations, 27 version groups, 1025 Pokemon, 1025 species, and 937 moves from PokeAPI. Each entity has its own ingest DAG that loads raw JSON payloads into MotherDuck, and a transform DAG that runs dbt models downstream. DAGs are chained via Airflow assets — ingestion completion triggers transformation automatically.
+
+A **Streamlit app** sits on top of the mart layer, providing a Pokedex Explorer with per-pokemon cards (sprites, stats radar, type badges, height/weight comparisons) and an NL-to-SQL "Ask the Pokedex" interface (WIP).
 
 Data flows through four layers:
 - **raw** — JSON payloads as-is from the API
@@ -47,6 +33,7 @@ Data flows through four layers:
 | Data source | PokeAPI | REST API for all Pokemon data |
 | Integration | astronomer-cosmos | Runs dbt models as native Airflow tasks |
 | Serialization | PyArrow | Efficient data transfer to DuckDB |
+| Frontend | Streamlit | Pokedex Explorer and NL-to-SQL interface |
 
 ## Pipelines
 
@@ -65,6 +52,8 @@ Data flows through four layers:
 | `transform__pokemons` | Asset: `raw/pokemons` | Runs all pokemon dbt models (stats, types, moves) |
 | `ingest__moves` | Asset: `raw/generations` | Fetches move details in batches of 50 |
 | `transform__moves` | Asset: `raw/moves` | Runs move detail dbt models |
+| `ingest__pokemon_species` | Asset: `staging/stg_pokemon_catalogue` | Fetches species data (descriptions, legendary status, evolution) in batches of 100 |
+| `transform__pokemon_species` | Asset: `raw/pokemon_species` | Runs species dbt models |
 | `check__source_freshness` | Weekly | Runs dbt source freshness checks |
 
 ### dbt Models
@@ -80,6 +69,7 @@ Data flows through four layers:
 | | `stg_past_stats` | Pokemon historical stat changes |
 | | `stg_generations` | Generation IDs and English names |
 | | `stg_version_groups` | Version groups with game versions |
+| | `stg_pokemon_species` | Species attributes (description, genus, legendary/mythical, evolution) |
 | | `stg_move_details` | Move attributes (power, accuracy, PP, type, damage class) |
 | **Intermediate** | `int_stats` | Pivoted stats (one column per stat) |
 | | `int_types` | Parsed current types with slot info |
@@ -97,7 +87,23 @@ Data flows through four layers:
 | | `mart_version_groups` | One row per version group |
 | | `mart_version_group_versions` | Game versions mapped to version groups |
 | | `mart_strongest_pokemons` | All pokemon ranked by total stats with tier labels |
+| | `mart_pokemon_species` | One row per pokemon with species data (description, genus, legendary, evolution) |
 | | `mart_strongest_starters` | Starter pokemon ranked by total stats |
+
+## Streamlit App
+
+The project includes a Streamlit app with two pages:
+
+- **Pokedex Explorer** (`pages/pokedex.py`) — Browse pokemon by generation. Each card shows sprites, Sword/Shield type badges, base stats radar chart, height/weight comparisons, tier ranking, and starter/legendary badges. All visuals are themed to the pokemon's primary type color.
+- **Ask the Pokedex** (`pages/ask.py`) — NL-to-SQL chat interface powered by Claude (WIP).
+
+```bash
+# From the project root
+cd streamlit
+streamlit run app.py
+```
+
+Requires a running MotherDuck connection with populated mart tables.
 
 ## Documentation
 
@@ -129,6 +135,12 @@ include/
 docs/                          # Architecture, data dictionary, runbooks
 nl_to_sql/                     # NL-to-SQL prompt engine (WIP)
 streamlit/                     # Streamlit app
+  app.py                       #   Entry point and page config
+  db.py                        #   MotherDuck query runner
+  queries.py                   #   SQL query constants
+  pages/
+    pokedex.py                 #   Pokedex Explorer page
+    ask.py                     #   NL-to-SQL chat page (WIP)
 Dockerfile                     # Astronomer Runtime 3.1
 requirements.txt               # Python dependencies
 ```
@@ -157,17 +169,17 @@ astro dev start
 
 Airflow UI at **http://localhost:8080** (admin / admin).
 
+### Streamlit
+
+```bash
+cd streamlit
+streamlit run app.py
+```
+
+Streamlit app at **http://localhost:8501**. Requires mart tables to be populated first (see below).
+
 ### First Run
 
 1. Trigger `setup__motherduck` to create raw tables
 2. Trigger `ingest__pokemon_catalogue` — this kicks off the pokemon pipeline automatically via assets
 3. Trigger `ingest__generations` — this kicks off generations, version groups, and moves pipelines
-
-## Roadmap
-
-- [x] Pokemon ingestion + full dbt modeling (stats, types, moves)
-- [x] Generation and version group pipelines
-- [x] Move detail pipeline (power, accuracy, type, damage class)
-- [x] Custom dbt data quality tests
-- [x] Asset-based DAG chaining
-- [ ] NL-to-SQL query interface

@@ -114,7 +114,7 @@ Mart tables use dbt's `incremental` materialization with a custom macro (`mart_i
 
 ## Pipeline topology
 
-Two independent pipeline chains run in parallel:
+Three independent pipeline chains run in parallel:
 
 ```
 Chain 1 — Pokemon pipeline:
@@ -122,6 +122,8 @@ Chain 1 — Pokemon pipeline:
     → transform__pokemon_catalogue (asset: raw/pokemon_catalogue)
       → ingest__pokemons (asset: staging/stg_pokemon_catalogue)
         → transform__pokemons (asset: raw/pokemons)
+      → ingest__pokemon_species (asset: staging/stg_pokemon_catalogue)
+        → transform__pokemon_species (asset: raw/pokemon_species)
 
 Chain 2 — Reference data pipeline:
   ingest__generations (manual)

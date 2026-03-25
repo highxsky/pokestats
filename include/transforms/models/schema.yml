@@ -73,6 +73,25 @@ sources:
           - name: payload
             description: JSON payload fetched from PokeAPI
             data_type: JSON
+      - name: pokemon_species
+        description: Pokemon species data fetched from the PokeAPI in raw state
+        loaded_at_field: fetch_date
+        freshness:
+          warn_after: {count: 15, period: day}
+          error_after: {count: 30, period: day}
+        columns:
+          - name: id
+            description: A pokemon's identifier
+            data_type: INTEGER
+          - name: fetch_date
+            description: Datetime when a pokemon species was fetched
+            data_type: TIMESTAMP
+          - name: batch_id
+            description: Airflow DAG batch ID
+            data_type: VARCHAR
+          - name: payload
+            description: JSON payload fetched from PokeAPI
+            data_type: JSON
       - name: generations
         description: Generation data fetched from the PokeAPI in raw state
         loaded_at_field: fetch_date

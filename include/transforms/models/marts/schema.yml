@@ -300,3 +300,45 @@ models:
       - name: valid_to_gen
         data_type: INTEGER
         description: The last generation this type assignment was active (NULL = still current)
+  - name: mart_pokemon_species
+    description: Pokemon species data — description, classification, legendary/mythical status, evolution link
+    columns:
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+        tests:
+          - unique
+          - not_null
+      - name: description
+        data_type: VARCHAR
+        description: English Pokedex flavor text (latest version)
+      - name: genus
+        data_type: VARCHAR
+        description: English classification (e.g. Mouse Pokemon)
+      - name: is_legendary
+        data_type: BOOLEAN
+        description: Whether the pokemon is legendary
+        tests:
+          - not_null
+      - name: is_mythical
+        data_type: BOOLEAN
+        description: Whether the pokemon is mythical
+        tests:
+          - not_null
+      - name: is_baby
+        data_type: BOOLEAN
+        description: Whether the pokemon is a baby form
+        tests:
+          - not_null
+      - name: color
+        data_type: VARCHAR
+        description: The pokemon's canonical color
+      - name: habitat
+        data_type: VARCHAR
+        description: The pokemon's habitat
+      - name: evolves_from_name
+        data_type: VARCHAR
+        description: Name of the species this pokemon evolves from (NULL if base form)
+      - name: evolves_from_id
+        data_type: INTEGER
+        description: ID of the species this pokemon evolves from (NULL if base form)

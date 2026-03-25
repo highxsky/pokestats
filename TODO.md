@@ -3,7 +3,7 @@
 ## 0. Housekeeping
 
 - [x] Fix syntax error in `queries.py` (missing comma line 9)
-- [ ] Remove or use `VERSIONS` query in `queries.py`
+- [x] Remove or use `VERSIONS` query in `queries.py`
 - [x] Add `plotly` and `anthropic` to project dependencies
 
 ## 1. Foundation
@@ -27,8 +27,8 @@
 
 - [x] Generation dropdown (from `mart_generations`)
 - [x] Pokemon dropdown filtered by generation (with poke_id)
-- [ ] Type multi-select (18 types)
-- [ ] Stat range sliders (total stat points)
+- [x] Type multi-select (18 types)
+- [x] Stat range sliders (total stat points)
 
 ### Pokemon card
 
@@ -45,20 +45,20 @@
 - [x] Radar chart title: "Total Points: N"
 - [x] Remove Plotly modebar on hover (all charts)
 - [x] Type-based color theming (all charts use primary type color)
-- [ ] Fine-tune weight section alignment (title, circles center, legend)
-- [ ] Left/right column visual separator
+- [x] Fine-tune weight section alignment (title, circles center, legend)
+- [x] Left/right column visual separator
 - [ ] Add species info to card: description, genus, habitat, evolves_from (after pipeline runs)
 
 ### Pokemon detail view
 
-- [ ] Moves table (name, type, power, accuracy, damage class)
+- [x] Moves table (name, type, power, accuracy, damage class)
 
 ## 3. Pokemon Species Pipeline (new)
 
 ### Ingestion (`ingest__pokemon_species.py`)
 
 - [x] DAG: fetch from `/pokemon-species/{id}`, batches of 50, skip-if-exists
-- [x] Trigger: asset `staging/stg_pokemon_catalogue`
+- [x] Trigger: asset `raw/pokemon_ids`
 - [x] Output: asset `raw/pokemon_species`
 - [x] Setup: add `raw.pokemon_species` table to `setup__motherduck.py`
 

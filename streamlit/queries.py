@@ -1,19 +1,12 @@
-POKEMON_GENERATIONS = """
-    SELECT 
-        * 
-    FROM dbt_dev_marts.mart_generations
-"""
+from config import SCHEMA_BASE, SCHEMA_MARTS
 
-POKEMON_VERSIONS = """
+POKEMON_GENERATIONS = f"""
     SELECT
-        vg.poke_gen,
-        vgv.version_name
-    FROM dbt_dev_marts.mart_version_group_versions vgv
-    INNER JOIN dbt_dev_marts.mart_version_groups vg
-        ON vg.version_group_id = vgv.version_group_id
+        *
+    FROM {SCHEMA_MARTS}.mart_generations
 """
 
-POKEMON_LIST = """
+POKEMON_LIST = f"""
     SELECT
         p.poke_id,
         p.poke_name,
@@ -29,37 +22,37 @@ POKEMON_LIST = """
         s.total_stat_points,
         sp.rank,
         sp.tier
-    FROM dbt_dev_marts.mart_pokemons p
-    INNER JOIN dbt_dev_marts.mart_stats s
+    FROM {SCHEMA_MARTS}.mart_pokemons p
+    INNER JOIN {SCHEMA_MARTS}.mart_stats s
         ON p.poke_id = s.poke_id
-    LEFT JOIN dbt_dev_marts.mart_strongest_pokemons sp
+    LEFT JOIN {SCHEMA_MARTS}.mart_strongest_pokemons sp
         ON p.poke_id = sp.poke_id
     ORDER BY p.poke_id
 """
 
-POKEMON_TYPES = """
+POKEMON_TYPES = f"""
     SELECT
         poke_id,
         slot,
         type
-    FROM dbt_dev_marts.mart_types
+    FROM {SCHEMA_MARTS}.mart_types
     ORDER BY poke_id, slot
 """
 
-POKEMON_STARTERS = """
+POKEMON_STARTERS = f"""
     SELECT
         poke_id
-    FROM dbt_dev_marts.mart_strongest_starters
+    FROM {SCHEMA_MARTS}.mart_strongest_starters
 """
 
-POKEMON_LEGENDARIES = """
+POKEMON_LEGENDARIES = f"""
     SELECT
         poke_id
-    FROM dbt_dev.legendary_pokemons
+    FROM {SCHEMA_BASE}.legendary_pokemons
     WHERE is_legendary = true
 """
 
-POKEMON_SPECIES = """
+POKEMON_SPECIES = f"""
     SELECT
         poke_id,
         description,
@@ -71,10 +64,10 @@ POKEMON_SPECIES = """
         habitat,
         evolves_from_name,
         evolves_from_id
-    FROM dbt_dev_marts.mart_pokemon_species
+    FROM {SCHEMA_MARTS}.mart_pokemon_species
 """
 
-POKEMON_MOVES = """
+POKEMON_MOVES = f"""
     SELECT
         pm.poke_id,
         m.move_name,
@@ -83,7 +76,7 @@ POKEMON_MOVES = """
         m.accuracy,
         m.pp,
         m.damage_class
-    FROM dbt_dev_marts.mart_pokemon_moves pm
-    INNER JOIN dbt_dev_marts.mart_moves m
+    FROM {SCHEMA_MARTS}.mart_pokemon_moves pm
+    INNER JOIN {SCHEMA_MARTS}.mart_moves m
         ON pm.move_id = m.move_id
 """

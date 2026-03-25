@@ -54,6 +54,7 @@ TYPE_COLORS = {
 df_pokemons = db.run_query(queries.POKEMON_LIST)
 df_types = db.run_query(queries.POKEMON_TYPES)
 df_generations = db.run_query(queries.POKEMON_GENERATIONS)
+df_moves = db.run_query(queries.POKEMON_MOVES)
 
 # ----------
 # Sidebar filters
@@ -69,13 +70,41 @@ selected_gen = st.sidebar.selectbox(
     format_func=lambda x: gen_options.loc[gen_options["poke_gen"] == x, "gen_name"].iloc[0],
 )
 
-# Pokemon dropdown (filtered by generation)
+# Type multi-select
+all_types = sorted(df_types["type"].unique())
+selected_types = st.sidebar.multiselect(
+    "Types",
+    options=all_types,
+    default=[],
+    format_func=lambda x: x.capitalize(),
+)
+
+# Stat range slider
+min_stats = int(df_pokemons["total_stat_points"].min())
+max_stats = int(df_pokemons["total_stat_points"].max())
+stat_range = st.sidebar.slider(
+    "Total Stat Points",
+    min_value=min_stats,
+    max_value=max_stats,
+    value=(min_stats, max_stats),
+)
+
+# Filter pokemons by generation, types, and stat range
 gen_pokemons = df_pokemons[df_pokemons["poke_gen"] == selected_gen].sort_values("poke_id")
+gen_pokemons = gen_pokemons[
+    (gen_pokemons["total_stat_points"] >= stat_range[0])
+    & (gen_pokemons["total_stat_points"] <= stat_range[1])
+]
+
+if selected_types:
+    poke_ids_with_types = df_types[df_types["type"].isin(selected_types)]["poke_id"].unique()
+    gen_pokemons = gen_pokemons[gen_pokemons["poke_id"].isin(poke_ids_with_types)]
 
 if gen_pokemons.empty:
-    st.warning(f"No Pokemon data available for this generation yet.")
+    st.warning("No Pokemon match the current filters.")
     st.stop()
 
+# Pokemon dropdown (filtered)
 selected_pokemon = st.sidebar.selectbox(
     "Pokemon",
     options=gen_pokemons["poke_id"].tolist(),
@@ -123,7 +152,7 @@ is_legendary = selected_pokemon in df_legendaries["poke_id"].values
 # Generation name
 gen_name = gen_options.loc[gen_options["poke_gen"] == poke_gen, "gen_name"].iloc[0]
 
-col_left, col_right = st.columns([1, 2])
+col_left, col_sep, col_right = st.columns([10, 1, 20])
 
 # ==============================
 # LEFT COLUMN
@@ -221,14 +250,22 @@ with col_left:
                 name=f"{poke_name} ({weight}kg)",
             ))
         fig_w.update_layout(
-            title=dict(text="Weight", x=0.5),
+            title=dict(text="Weight", x=0.5, xanchor="center"),
             xaxis=dict(visible=False, range=[-1, 1], constrain="domain"),
             yaxis=dict(visible=False, range=[-1, 1], scaleanchor="x", scaleratio=1),
             showlegend=True,
-            legend=dict(orientation="h", yanchor="top", y=-0.02, xanchor="center", x=0.5),
-            margin=dict(l=40, r=40, t=40, b=40), height=280,
+            legend=dict(orientation="h", yanchor="top", y=-0.05, xanchor="center", x=0.5),
+            margin=dict(l=20, r=20, t=40, b=60), height=280,
         )
         st.plotly_chart(fig_w, use_container_width=True, config=PLOTLY_CONFIG)
+
+# ==============================
+# SEPARATOR
+# ==============================
+with col_sep:
+    st.html(
+        '<div style="border-left: 2px solid rgba(255,255,255,0.15); height: 100%; min-height: 600px; margin: 0 auto; width: 0;"></div>'
+    )
 
 # ==============================
 # RIGHT COLUMN: radar chart
@@ -264,3 +301,20 @@ with col_right:
         height=500,
     )
     st.plotly_chart(fig, use_container_width=True, config=PLOTLY_CONFIG)
+
+# ----------
+# Moves table
+# ----------
+
+st.divider()
+st.subheader("Moves")
+
+pokemon_moves = df_moves[df_moves["poke_id"] == selected_pokemon].drop(columns=["poke_id"])
+pokemon_moves = pokemon_moves.sort_values(["damage_class", "type", "move_name"])
+pokemon_moves.columns = ["Move", "Type", "Power", "Accuracy", "PP", "Class"]
+
+st.dataframe(
+    pokemon_moves,
+    use_container_width=True,
+    hide_index=True,
+)

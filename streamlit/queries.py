@@ -46,6 +46,34 @@ POKEMON_TYPES = """
     ORDER BY poke_id, slot
 """
 
+POKEMON_STARTERS = """
+    SELECT
+        poke_id
+    FROM dbt_dev_marts.mart_strongest_starters
+"""
+
+POKEMON_LEGENDARIES = """
+    SELECT
+        poke_id
+    FROM dbt_dev.legendary_pokemons
+    WHERE is_legendary = true
+"""
+
+POKEMON_SPECIES = """
+    SELECT
+        poke_id,
+        description,
+        genus,
+        is_legendary,
+        is_mythical,
+        is_baby,
+        color,
+        habitat,
+        evolves_from_name,
+        evolves_from_id
+    FROM dbt_dev_marts.mart_pokemon_species
+"""
+
 POKEMON_MOVES = """
     SELECT
         pm.poke_id,

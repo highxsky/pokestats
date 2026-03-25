@@ -12,20 +12,20 @@ WITH raw_input AS (
 en_flavor_text AS (
   SELECT
     ri.poke_id,
-    ft.value->>'$.flavor_text' AS flavor_text
+    ft->>'$.flavor_text' AS flavor_text
   FROM raw_input ri,
-  UNNEST(ri.payload->'$.flavor_text_entries') AS ft
-  WHERE ft.value->>'$.language.name' = 'en'
-  QUALIFY ROW_NUMBER() OVER (PARTITION BY ri.poke_id ORDER BY rowid DESC) = 1
+  UNNEST(from_json(ri.payload->'$.flavor_text_entries', '["json"]')) WITH ORDINALITY AS t(ft, pos)
+  WHERE ft->>'$.language.name' = 'en'
+  QUALIFY ROW_NUMBER() OVER (PARTITION BY ri.poke_id ORDER BY pos DESC) = 1
 ),
 
 en_genus AS (
   SELECT
     ri.poke_id,
-    g.value->>'$.genus' AS genus
+    g->>'$.genus' AS genus
   FROM raw_input ri,
-  UNNEST(ri.payload->'$.genera') AS g
-  WHERE g.value->>'$.language.name' = 'en'
+  UNNEST(from_json(ri.payload->'$.genera', '["json"]')) AS g
+  WHERE g->>'$.language.name' = 'en'
 )
 
 SELECT

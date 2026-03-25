@@ -134,6 +134,9 @@ def pokemon_catalogue_etl():
                 INSERT INTO raw.pokemon_catalogue
                 SELECT fetch_date, batch_id, payload::JSON
                 FROM arrow_table
+                WHERE CAST(payload::JSON->>'$.id' AS INT) NOT IN (
+                    SELECT CAST(payload->>'$.id' AS INT) FROM raw.pokemon_catalogue
+                )
             """)
         finally:
             con.close()

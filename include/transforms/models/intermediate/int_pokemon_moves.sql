@@ -2,6 +2,7 @@
 
 WITH source AS (
     SELECT
+        fetch_date,
         poke_id,
         moves
     FROM {{ ref('stg_pokemon_moves') }}
@@ -9,6 +10,7 @@ WITH source AS (
 
 parsed AS (
     SELECT DISTINCT
+        fetch_date,
         poke_id,
         CAST(STRING_SPLIT(RTRIM(move->>'$.move.url', '/'), '/')[-1] AS INT) AS move_id
     FROM source,

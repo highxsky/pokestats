@@ -102,7 +102,7 @@ def ingest_version_groups():
         import json
 
         context = get_current_context()
-        fetch_date = context["data_interval_end"].isoformat()
+        fetch_date = context["logical_date"].isoformat()
         run_id = context["dag_run"].run_id
 
         endpoint = f'https://pokeapi.co/api/v2/version-group/{version_group_id}/'

@@ -111,7 +111,7 @@ def ingest_moves():
         import pyarrow as pa
 
         context = get_current_context()
-        fetch_date = context["data_interval_end"].isoformat()
+        fetch_date = context["logical_date"].isoformat()
         run_id = context["dag_run"].run_id
 
         move_list = []

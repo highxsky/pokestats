@@ -13,6 +13,9 @@
 - [x] Add `POKEMON_LIST` query (pokemons + stats + rank/tier)
 - [x] Add `POKEMON_TYPES` query (poke_id, slot, type)
 - [x] Add `POKEMON_MOVES` query (poke_id + move details)
+- [x] Add `POKEMON_STARTERS` query (starter poke_ids)
+- [x] Add `POKEMON_LEGENDARIES` query (from seed, temporary until species pipeline runs)
+- [x] Add `POKEMON_SPECIES` query (description, genus, legendary, mythical, baby, color, habitat, evolution)
 
 ### App config (`app.py`)
 
@@ -27,26 +30,58 @@
 - [ ] Type multi-select (18 types)
 - [ ] Stat range sliders (total stat points)
 
-### Pokemon card — layout rework needed
+### Pokemon card
 
+- [x] Reorder: pokemon id + name first, then sprite below
 - [x] Sprite image (PokeAPI GitHub sprites via `poke_id`)
-- [x] Name, types, tier + power rank
-- [x] Height comparison bars (vs avg human)
-- [x] Weight comparison circles (vs avg human)
-- [x] Radar chart (hp/atk/def/spa/spd/spe)
+- [x] Type sprites (PokeAPI Sword/Shield type badges)
+- [x] Generation display
+- [x] Tier + power rank
+- [x] Conditional badges (Starter, Legendary)
+- [x] Divider between identity section and height/weight
+- [x] Height comparison bars with type-colored borders
+- [x] Weight circles: human outline only, pokemon filled, with visible edges
+- [x] Radar chart: transparent background, white grid lines, angular shape, type-colored polygon
+- [x] Radar chart title: "Total Points: N"
+- [x] Remove Plotly modebar on hover (all charts)
 - [x] Type-based color theming (all charts use primary type color)
-- [ ] Reorder: pokemon id + name first, then sprite below
-- [ ] Key info on the left, height/weight below with clear separation line
-- [ ] Fix weight section alignment (title, circles center, legend)
-- [ ] Add separation line between identity section and height/weight section
-- [ ] Radar chart: remove background fill, white grid lines, type-colored polygon only
-- [ ] Center radar chart properly
+- [ ] Fine-tune weight section alignment (title, circles center, legend)
+- [ ] Left/right column visual separator
+- [ ] Add species info to card: description, genus, habitat, evolves_from (after pipeline runs)
 
 ### Pokemon detail view
 
 - [ ] Moves table (name, type, power, accuracy, damage class)
 
-## 3. Ask the Pokedex (`pages/ask.py`)
+## 3. Pokemon Species Pipeline (new)
+
+### Ingestion (`ingest__pokemon_species.py`)
+
+- [x] DAG: fetch from `/pokemon-species/{id}`, batches of 50, skip-if-exists
+- [x] Trigger: asset `staging/stg_pokemon_catalogue`
+- [x] Output: asset `raw/pokemon_species`
+- [x] Setup: add `raw.pokemon_species` table to `setup__motherduck.py`
+
+### Transform (`transform__pokemon_species.py`)
+
+- [x] DAG: Cosmos DbtDag with selector `source:raw.pokemon_species+`
+- [x] Source definition in `schema.yml`
+
+### dbt models
+
+- [x] `stg_pokemon_species.sql` — parse flavor text (en, latest version), genus, booleans, evolution link
+- [x] `mart_pokemon_species.sql` — incremental mart
+- [x] Schema definitions for both layers
+
+### Post-pipeline
+
+- [ ] Run `setup__motherduck` to create `raw.pokemon_species` table
+- [ ] Run `ingest__pokemon_species` to populate data
+- [ ] Verify `mart_pokemon_species` data
+- [ ] Switch `POKEMON_LEGENDARIES` query from seed to mart
+- [ ] Wire species data into Streamlit card
+
+## 4. Ask the Pokedex (`pages/ask.py`)
 
 ### Setup
 
@@ -65,14 +100,15 @@
 - [ ] Display results as `st.dataframe()`
 - [ ] Client-side SQL safety check (reject non-SELECT statements)
 
-## 4. Styling
+## 5. Styling
 
 - [x] Type color map (18 types to canonical Pokemon colors)
 - [ ] Type badge styling via `st.markdown` + HTML
 - [x] Stat bar/chart coloring (type-based)
 
-## 5. Nice-to-have
+## 6. Nice-to-have
 
 - [ ] Compare mode — 2 Pokemon side-by-side with overlaid stat charts
 - [ ] Search autocomplete via `st.selectbox` with full name list
 - [ ] Generation timeline chart (Pokemon count by gen)
+- [ ] Full evolution chain visualization (requires fetching evolution-chain endpoint)

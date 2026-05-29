@@ -5,92 +5,219 @@ models:
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
+        tests:
+          - unique
+          - not_null
       - name: hp
         data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: attack
         data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: defense
         data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: special_attack
         data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: special_defense
         data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: speed
         data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
   - name: int_past_stats
     columns:
       - name: past_stat_id
         data_type: VARCHAR
         description: Surrogate key for a pokemon's past stat
+        tests:
+          - unique
+          - not_null
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
+        tests:
+          - not_null
       - name: poke_gen
         data_type: INTEGER
         description: Generation of a pokemon
+        tests:
+          - not_null
       - name: stat_name
         data_type: VARCHAR
         description: A pokemon's stat name (e.g. attack, speed)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['hp', 'attack', 'defense', 'special', 'special-attack', 'special-defense', 'speed']
       - name: stat_value
         data_type: INTEGER
         description: A pokemon's stat value (e.g. 85)
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
   - name: int_past_types
     columns:
       - name: past_type_id
         data_type: VARCHAR
         description: Surrogate key for a pokemon's past type
+        tests:
+          - unique
+          - not_null
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
+        tests:
+          - not_null
       - name: poke_gen
         data_type: INTEGER
         description: Generation of a pokemon
+        tests:
+          - not_null
       - name: slot
         data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2]
       - name: type
         data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
   - name: int_types
     columns:
       - name: type_id
         data_type: VARCHAR
         description: Surrogate key for a pokemon's type
+        tests:
+          - unique
+          - not_null
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
+        tests:
+          - not_null
       - name: slot
         data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2]
       - name: type
         data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
+  - name: int_pokemon_moves
+    columns:
+      - name: pokemon_move_id
+        data_type: VARCHAR
+        description: Surrogate key (poke_id, move_id)
+        tests:
+          - unique
+          - not_null
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+        tests:
+          - not_null
+      - name: move_id
+        data_type: INTEGER
+        description: The move identifier (parsed from URL)
+        tests:
+          - not_null
   - name: int_type_history
     columns:
       - name: type_id
         data_type: VARCHAR
         description: Surrogate key for a pokemon's type history entry
+        tests:
+          - unique
+          - not_null
       - name: fetch_date
         data_type: TIMESTAMP
         description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
       - name: poke_id
         data_type: INTEGER
         description: A pokemon's identifier
+        tests:
+          - not_null
       - name: slot
         data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2]
       - name: type
         data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
       - name: valid_from_gen
         data_type: INTEGER
         description: Generation from which this type assignment is valid
+        tests:
+          - not_null
       - name: valid_to_gen
         data_type: INTEGER
         description: Generation until which this type assignment was valid (NULL if current)

@@ -3,7 +3,7 @@ sources:
   - name: raw
     schema: raw
     tables:
-      - name: pokemon_data
+      - name: pokemons
         description: Pokemon's detailed data fetched from the PokeAPI in raw state
         loaded_at_field: fetch_date
         freshness:
@@ -19,8 +19,8 @@ sources:
           - name: batch_id
             description: Airflow DAG batch ID
             data_type: VARCHAR
-          - name: raw
-            description: JSON array fetched from PokeAPI
+          - name: payload
+            description: JSON payload fetched from PokeAPI
             data_type: JSON
       - name: pokemon_catalogue
         description: Pokemon's catalogue data fetched from the PokeAPI in raw state
@@ -35,6 +35,76 @@ sources:
           - name: batch_id
             description: Airflow DAG batch ID
             data_type: VARCHAR
-          - name: raw
-            description: JSON array fetched from PokeAPI
+          - name: payload
+            description: JSON payload fetched from PokeAPI
+            data_type: JSON
+      - name: version_groups
+        description: Version group data fetched from the PokeAPI in raw state
+        loaded_at_field: fetch_date
+        freshness:
+          warn_after: {count: 360, period: day}
+          error_after: {count: 720, period: day}
+        columns:
+          - name: fetch_date
+            description: Datetime when the version group was fetched
+            data_type: TIMESTAMP
+          - name: batch_id
+            description: Airflow DAG batch ID
+            data_type: VARCHAR
+          - name: payload
+            description: JSON payload fetched from PokeAPI
+            data_type: JSON
+      - name: moves
+        description: Move detail data fetched from the PokeAPI in raw state
+        loaded_at_field: fetch_date
+        freshness:
+          warn_after: {count: 360, period: day}
+          error_after: {count: 720, period: day}
+        columns:
+          - name: id
+            description: The move identifier
+            data_type: INTEGER
+          - name: fetch_date
+            description: Datetime when the move was fetched
+            data_type: TIMESTAMP
+          - name: batch_id
+            description: Airflow DAG batch ID
+            data_type: VARCHAR
+          - name: payload
+            description: JSON payload fetched from PokeAPI
+            data_type: JSON
+      - name: pokemon_species
+        description: Pokemon species data fetched from the PokeAPI in raw state
+        loaded_at_field: fetch_date
+        freshness:
+          warn_after: {count: 15, period: day}
+          error_after: {count: 30, period: day}
+        columns:
+          - name: id
+            description: A pokemon's identifier
+            data_type: INTEGER
+          - name: fetch_date
+            description: Datetime when a pokemon species was fetched
+            data_type: TIMESTAMP
+          - name: batch_id
+            description: Airflow DAG batch ID
+            data_type: VARCHAR
+          - name: payload
+            description: JSON payload fetched from PokeAPI
+            data_type: JSON
+      - name: generations
+        description: Generation data fetched from the PokeAPI in raw state
+        loaded_at_field: fetch_date
+        freshness:
+          warn_after: {count: 360, period: day}
+          error_after: {count: 720, period: day}
+        columns:
+          - name: fetch_date
+            description: Datetime when the generation was fetched
+            data_type: TIMESTAMP
+          - name: batch_id
+            description: Airflow DAG batch ID
+            data_type: VARCHAR
+          - name: payload
+            description: JSON payload fetched from PokeAPI
             data_type: JSON

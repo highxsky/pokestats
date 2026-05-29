@@ -1,4 +1,4 @@
-from config import SCHEMA_BASE, SCHEMA_MARTS
+from config import SCHEMA_MARTS
 
 POKEMON_GENERATIONS = f"""
     SELECT
@@ -48,7 +48,7 @@ POKEMON_STARTERS = f"""
 POKEMON_LEGENDARIES = f"""
     SELECT
         poke_id
-    FROM {SCHEMA_BASE}.legendary_pokemons
+    FROM {SCHEMA_MARTS}.mart_pokemon_species
     WHERE is_legendary = true
 """
 

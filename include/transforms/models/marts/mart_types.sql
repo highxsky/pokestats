@@ -1,14 +1,10 @@
-{{ config(materialized='table') }}
+{{ mart_incremental_load_config('poke_id', 'int_types') }}
+
+WITH source AS (
+  SELECT * FROM {{ ref('int_types') }}
+  {{ incremental_where() }}
+)
 
 SELECT
-    type_id,
-    poke_id,
-    slot,
-    type,
-    CASE
-        WHEN slot = 1 THEN True
-        ELSE False
-    END AS is_primary_slot,
-    valid_from_gen,
-    valid_to_gen
-FROM {{ ref('int_type_history') }}
+  {{ dbt_utils.star(ref('int_types'), except=['fetch_date']) }}
+FROM source

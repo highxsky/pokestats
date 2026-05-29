@@ -1,21 +1,16 @@
-{{ mart_incremental_load_config('poke_id', 'stg_pokemons') }}
+{{ config(materialized='view') }}
 
-WITH source AS (
-  SELECT * FROM {{ ref('stg_pokemons') }}
-  {{ incremental_where() }}
-),
-
-ranked AS (
+WITH ranked AS (
   SELECT
-    s.poke_gen,
-    s.poke_id,
-    s.poke_name,
+    mp.poke_gen,
+    mp.poke_id,
+    mp.poke_name,
     {{ dbt_utils.star(from=ref('mart_stats'), except=['poke_id']) }},
     ROW_NUMBER() OVER (ORDER BY ms.total_stat_points DESC) AS rank,
     PERCENT_RANK() OVER (ORDER BY ms.total_stat_points) AS pct_rank
-  FROM source s
+  FROM {{ ref('mart_pokemons') }} mp
   INNER JOIN {{ ref('mart_stats') }} ms
-    ON ms.poke_id = s.poke_id
+    ON ms.poke_id = mp.poke_id
 )
 
 SELECT

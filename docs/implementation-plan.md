@@ -89,21 +89,28 @@ Switch the *build* engine from MotherDuck to a local file. This alone should fix
 - **Do:** in `airflow_settings.yaml`, change `motherduck_conn` to point `conn_host` at the local `.duckdb` path and drop the `motherduck_token` extra. Re-import settings (`astro dev object import`, or restart).
 - **Done when:** `setup__motherduck` (rename later) creates schemas/tables in the **local** file; you can query them with the DuckDB CLI on the host.
 
-### ☐ Chunk 1.3 — Seed the local DB from your Parquet backup ⏱ ~30–45 min
-- **Goal:** load the data you exported in 0.2 into the fresh local DB so you don't re-fetch from the API.
-- **Do:** after `setup__motherduck` has created the raw tables, `INSERT INTO raw.X SELECT * FROM read_parquet('include/archive/raw/X.parquet')` for each table. A one-off task or manual CLI run is fine for now (you'll automate reload in Phase 2).
-- **Done when:** local `raw.*` tables have the same row counts as your MotherDuck backup.
+### ✅ Chunk 1.3 — Seed the local DB from your Parquet backup — DONE
+- **Goal:** load the data exported in 0.2 into the fresh local DB so you don't re-fetch from the API.
+- **How:** `scripts/seed_raw_from_archive.py` (inverse of the backup script). For each `include/archive/raw/*.parquet` it runs `CREATE OR REPLACE TABLE raw.<t> AS SELECT * FROM read_parquet(...)` into `include/transforms/poke_db.duckdb`. **No casting** — DuckDB preserves the JSON type through Parquet (verified), and `->>` works on it directly. `CREATE OR REPLACE` makes it idempotent.
+- **Run** (Astro container stopped, to avoid the write lock): `.venv/bin/python scripts/seed_raw_from_archive.py`
+- **Done:** all 7 `raw.*` tables seeded with matching counts; `payload` is JSON and `payload->>'$.name'` works against the local DB.
 
-### ☐ Chunk 1.4 — Handle the single-writer lock ⏱ ~45–60 min
-- **Goal:** stop concurrent DAG tasks from crashing on DuckDB file locks.
+### ☐ Chunk 1.4 — Single-writer lock (only if you actually hit it) ⏱ ~45–60 min
+- **When to bother:** only if you see a `Conflicting lock` error from two DAG tasks writing the local file at the same time. Solo, sequential runs usually never trigger it — **don't pre-build this.**
 - **🔑 Read first:** DuckDB concurrency (one read-write process at a time) — https://duckdb.org/docs/connect/concurrency ; Airflow pools — https://airflow.apache.org/docs/apache-airflow/stable/administration-and-deployment/pools.html
-- **⚠️** This *will* bite you: two asset-triggered DAGs writing the same file at once → `Conflicting lock` error.
-- **Do:** create an Airflow **pool** with **1 slot** (e.g. `duckdb_write`) and assign every task that *writes* to the DB to that pool. Reads can stay outside it. Alternatively/additionally set `max_active_tasks` appropriately.
-- **Done when:** triggering two transform/ingest DAGs at once no longer throws lock errors; writes serialize.
+- **Fix if needed:** create an Airflow **pool** with **1 slot** (e.g. `duckdb_write`) and assign DB-writing tasks to it so writes serialize. (Or set `max_active_tasks`.)
+- **Done when:** concurrent DAGs no longer throw lock errors.
 
 ---
 
-## Phase 2 — Raw landing zone (extract once) ⏱ ~3–4 evenings total
+## Phase 2 — Raw landing zone (extract once) — OPTIONAL ⏱ ~3–4 evenings total
+
+> **Optional / later — not on the critical path.** You already have a working archive (the 0.2
+> Parquet backup) and a one-command reload (1.3), and your local `.duckdb` persists on disk — so
+> the core pipeline does **not** depend on this. This phase is the *enhancement* where ingest
+> writes to the archive natively on every run (true "extract once"), enabling fully offline
+> rebuilds. Do it for the practice or if you ever need portable/offline rebuilds — **not** to fix
+> the free tier (that's already solved by Phase 1).
 
 Make the API archive the source of truth so rebuilds never re-hit PokeAPI. Do this for **one** entity first, prove it, then replicate.
 

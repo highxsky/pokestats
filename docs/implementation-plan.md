@@ -77,11 +77,11 @@ Do this first. It also doubles as the seed for your raw archive (Phase 2).
 Switch the *build* engine from MotherDuck to a local file. This alone should fix your slow/failing dbt steps.
 
 ### ☐ Chunk 1.1 — Point dbt at a local DuckDB file ⏱ ~30–45 min
-- **Goal:** dbt builds into a local file, not `md:poke_db`.
+- **Goal:** dbt builds into a local file, not `md:poke_db`. **Both** `dev` and `prod` targets go to local DuckDB — MotherDuck does not re-enter until **Phase 3** (publishing the mart layer only).
 - **🔑 Read first:** dbt-duckdb profile config — https://github.com/duckdb/dbt-duckdb
-- **Do:** in `include/transforms/profiles.yml`, change the `dev` (and later `prod`) `path` from `md:poke_db` to a local path, e.g. `/usr/local/airflow/include/transforms/poke_db.duckdb`. Bump `threads` from `1` to `4`.
-- **⚠️** Keep the DB file under `include/` (persistent bind mount), **not** under `/tmp` (that path is wiped — it's only for dbt target/logs per `dbt_project.yml`).
-- **Done when:** `dbt build` (or a Cosmos transform DAG) runs against the local file with no MotherDuck token, and it's visibly faster.
+- **Do:** in `include/transforms/profiles.yml`, change **both** the `dev` and `prod` `path` from `md:poke_db` to the same local path: `/usr/local/airflow/include/transforms/poke_db.duckdb`. Bump `dev` `threads` from `1` to `4` (`prod` is already `4`). Leave the `schema` values as-is (`dbt_dev` / `analytics`).
+- **⚠️** Keep the DB file under `include/`, **not** under `/tmp`. The `.duckdb` file holds your actual data and must persist; `/tmp` is wiped on container restart (it's only used for dbt's regenerable `target/` and `log` artifacts per `dbt_project.yml`). The container path `/usr/local/airflow/include/...` and host path `include/...` are the **same physical file** (bind mount).
+- **Done when:** inside the container (`astro dev bash` → `cd include/transforms && dbt debug`) the connection succeeds against the local file with no token. A full `dbt build` will still be empty until Chunks 1.2 (Airflow conn → same file) and 1.3 (seed from Parquet) are done.
 
 ### ☐ Chunk 1.2 — Point the Airflow DuckDB connection at the local file ⏱ ~30 min
 - **Goal:** ingest DAGs write to the same local file dbt reads.

@@ -140,7 +140,8 @@ models:
         description: "Strength tier based on percentile rank: S (top 5%), A (5-20%), B (20-45%), C (45-70%), D (70-90%), F (bottom 10%)"
         tests:
           - accepted_values:
-              values: ['S', 'A', 'B', 'C', 'D', 'F']
+              arguments:
+                values: ['S', 'A', 'B', 'C', 'D', 'F']
   - name: mart_generations
     description: One row per Pokemon generation with its English display name
     columns:
@@ -194,8 +195,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('mart_version_groups')
-              field: version_group_id
+              arguments:
+                to: ref('mart_version_groups')
+                field: version_group_id
   - name: mart_pokemon_moves
     description: One row per pokemon x move
     columns:
@@ -252,7 +254,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['physical', 'special', 'status']
+              arguments:
+                values: ['physical', 'special', 'status']
       - name: poke_gen
         data_type: INTEGER
         description: Generation this move was introduced in

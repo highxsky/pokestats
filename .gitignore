@@ -1,5 +1,16 @@
 .git
 
+# DuckDB local database + WAL (build artifacts, regenerable)
+*.duckdb
+*.duckdb.wal
+
+# Archived raw data extracts (regenerable from ingest DAGs)
+include/archive/
+
+# Claude docs - Internal purposes
+docs/dbt-cert-practice-plan.md
+docs/dbt-project-assessment-framework.md
+
 # Airflow
 airflow-webserver.pid
 webserver_config.py

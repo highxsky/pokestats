@@ -90,7 +90,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['hp', 'attack', 'defense', 'special', 'special-attack', 'special-defense', 'speed']
+              arguments:
+                values: ['hp', 'attack', 'defense', 'special', 'special-attack', 'special-defense', 'speed']
       - name: stat_value
         data_type: INTEGER
         description: A pokemon's stat value (e.g. 85)
@@ -128,13 +129,15 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [1, 2]
+              arguments:
+                values: [1, 2]
       - name: type
         data_type: VARCHAR
         tests:
           - not_null
           - accepted_values:
-              values: ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
+              arguments:
+                values: ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
   - name: int_types
     columns:
       - name: type_id
@@ -158,13 +161,15 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [1, 2]
+              arguments:
+                values: [1, 2]
       - name: type
         data_type: VARCHAR
         tests:
           - not_null
           - accepted_values:
-              values: ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
+              arguments:
+                values: ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
   - name: int_pokemon_moves
     columns:
       - name: pokemon_move_id
@@ -206,13 +211,15 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [1, 2]
+              arguments:
+                values: [1, 2]
       - name: type
         data_type: VARCHAR
         tests:
           - not_null
           - accepted_values:
-              values: ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
+              arguments:
+                values: ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
       - name: valid_from_gen
         data_type: INTEGER
         description: Generation from which this type assignment is valid

@@ -5,15 +5,9 @@ profile: 'transforms'
 model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
-# seed-paths: ["seeds"]
+seed-paths: ["seeds"]
 macro-paths: ["macros"]
-# snapshot-paths: ["snapshots"]
-
-# Redirect build artifacts to container-local /tmp to avoid Docker/host
-# permission conflicts when running inside a containerized Airflow environment.
-# target/ and logs/ are ephemeral and must never be written to the bind mount.
-target-path: "/tmp/dbt_target"
-log-path: "/tmp/dbt_logs"
+snapshot-paths: ["snapshots"]
 
 # directories to be removed by `dbt clean`
 clean-targets:
@@ -29,12 +23,15 @@ models:
     staging:
       +materialized: view
       +schema: staging
-      +dbt-osmosis: "schema.yml"
+      +meta:
+        dbt-osmosis: "schema.yml"
     intermediate:
       +materialized: view
       +schema: intermediate
-      +dbt-osmosis: "schema.yml"
+      +meta:
+        dbt-osmosis: "schema.yml"
     marts:
       +materialized: table
       +schema: marts
-      +dbt-osmosis: "schema.yml"
+      +meta:
+        dbt-osmosis: "schema.yml"

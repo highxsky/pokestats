@@ -218,7 +218,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['physical', 'special', 'status']
+              arguments:
+                values: ['physical', 'special', 'status']
       - name: poke_gen
         description: The generation this move was introduced in
         data_type: INTEGER
@@ -248,9 +249,10 @@ models:
           - not_null
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - poke_id
-            - fetch_date
+          arguments:
+            combination_of_columns:
+              - poke_id
+              - fetch_date
   - name: stg_pokemon_species
     columns:
       - name: fetch_date

@@ -1,4 +1,4 @@
-# pokemon_airflow
+# PokéStats
 
 A data pipeline that ingests Pokemon data from [PokeAPI](https://pokeapi.co), loads it into [MotherDuck](https://motherduck.com) (cloud DuckDB), and transforms it through a full dbt modeling layer — orchestrated by [Apache Airflow](https://airflow.apache.org/).
 

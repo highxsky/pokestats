@@ -4,11 +4,11 @@ transforms:
   outputs:
     dev:
       type: duckdb
-      path: md:poke_db
+      path: "{{ env_var('DUCKDB_PATH', 'poke_db.duckdb') }}"
       schema: dbt_dev
-      threads: 1
+      threads: 4
     prod:
       type: duckdb
-      path: md:poke_db
+      path: "{{ env_var('DUCKDB_PATH', 'poke_db.duckdb') }}"
       schema: analytics
       threads: 4

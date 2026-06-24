@@ -6,7 +6,7 @@ transforms:
       type: duckdb
       path: "{{ env_var('DUCKDB_PATH', 'poke_db.duckdb') }}"
       schema: dbt_dev
-      threads: 4
+      threads: 1
     prod:
       type: duckdb
       path: "{{ env_var('DUCKDB_PATH', 'poke_db.duckdb') }}"

@@ -4,7 +4,7 @@ models:
     columns:
       - name: poke_id
         data_type: INTEGER
-        description: A pokemon's identifier
+        description: '{{ doc("poke_id") }}'
         tests:
           - unique
           - not_null
@@ -15,6 +15,7 @@ models:
               arguments:
                 min_value: 0
                 max_value: 255
+        description: '{{ doc("hp") }}'
       - name: attack
         data_type: INTEGER
         tests:
@@ -22,6 +23,7 @@ models:
               arguments:
                 min_value: 0
                 max_value: 255
+        description: '{{ doc("attack") }}'
       - name: defense
         data_type: INTEGER
         tests:
@@ -29,6 +31,7 @@ models:
               arguments:
                 min_value: 0
                 max_value: 255
+        description: '{{ doc("defense") }}'
       - name: special_attack
         data_type: INTEGER
         tests:
@@ -36,6 +39,7 @@ models:
               arguments:
                 min_value: 0
                 max_value: 255
+        description: '{{ doc("special_attack") }}'
       - name: special_defense
         data_type: INTEGER
         tests:
@@ -43,6 +47,7 @@ models:
               arguments:
                 min_value: 0
                 max_value: 255
+        description: '{{ doc("special_defense") }}'
       - name: speed
         data_type: INTEGER
         tests:
@@ -50,6 +55,7 @@ models:
               arguments:
                 min_value: 0
                 max_value: 255
+        description: '{{ doc("speed") }}'
       - name: total_stat_points
         data_type: INTEGER
         tests:

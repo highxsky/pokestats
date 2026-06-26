@@ -5,7 +5,7 @@ models:
     columns:
       - name: poke_gen
         data_type: INTEGER
-        description: The generation identifier
+        description: '{{ doc("poke_gen") }}'
         tests:
           - unique
           - not_null

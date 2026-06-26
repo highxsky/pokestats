@@ -6,7 +6,7 @@ models:
     columns:
       - name: poke_id
         data_type: INTEGER
-        description: A pokemon's identifier
+        description: '{{ doc("poke_id") }}'
         tests:
           - unique
           - not_null

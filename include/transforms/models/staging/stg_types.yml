@@ -4,13 +4,14 @@ models:
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
-        description: Datetime when a pokemon was fetched
+        description: '{{ doc("fetch_date") }}'
         tests:
           - not_null
       - name: poke_id
         data_type: INTEGER
         tests:
           - not_null
+        description: '{{ doc("poke_id") }}'
       - name: types
         data_type: JSON
         tests:

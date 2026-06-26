@@ -5,19 +5,19 @@ models:
     columns:
       - name: type_id
         data_type: VARCHAR
-        description: Surrogate key (hash of poke_id, slot, valid_from_gen)
+        description: '{{ doc("type_id") }}'
         tests:
           - unique
           - not_null
       - name: poke_id
         data_type: INTEGER
-        description: A pokemon's identifier
+        description: '{{ doc("poke_id") }}'
       - name: slot
         data_type: INTEGER
-        description: Type slot (1 = primary, 2 = secondary)
+        description: '{{ doc("slot") }}'
       - name: type
         data_type: VARCHAR
-        description: The type name
+        description: '{{ doc("type") }}'
       - name: valid_from_gen
         data_type: INTEGER
         description: The generation this type assignment became active

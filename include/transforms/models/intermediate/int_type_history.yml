@@ -4,18 +4,18 @@ models:
     columns:
       - name: type_id
         data_type: VARCHAR
-        description: Surrogate key for a pokemon's type history entry
+        description: '{{ doc("type_id") }}'
         tests:
           - unique
           - not_null
       - name: fetch_date
         data_type: TIMESTAMP
-        description: Datetime when a pokemon was fetched
+        description: '{{ doc("fetch_date") }}'
         tests:
           - not_null
       - name: poke_id
         data_type: INTEGER
-        description: A pokemon's identifier
+        description: '{{ doc("poke_id") }}'
         tests:
           - not_null
       - name: slot
@@ -25,14 +25,15 @@ models:
           - accepted_values:
               arguments:
                 values: [1, 2]
+        description: '{{ doc("slot") }}'
       - name: type
         data_type: VARCHAR
         tests:
           - not_null
           - accepted_values:
               arguments:
-                values: [normal, fire, water, electric, grass, ice, fighting, poison, ground, flying,
-                  psychic, bug, rock, ghost, dragon, dark, steel, fairy]
+                values: [normal, fire, water, electric, grass, ice, fighting, poison, ground, flying, psychic, bug, rock, ghost, dragon, dark, steel, fairy]
+        description: '{{ doc("type") }}'
       - name: valid_from_gen
         data_type: INTEGER
         description: Generation from which this type assignment is valid

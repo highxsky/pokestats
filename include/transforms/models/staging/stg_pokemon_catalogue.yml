@@ -4,22 +4,22 @@ models:
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
-        description: Datetime when a pokemon was fetched
+        description: '{{ doc("fetch_date") }}'
         tests:
           - not_null
       - name: poke_gen
         data_type: INTEGER
-        description: A pokemon's generation
+        description: '{{ doc("poke_gen") }}'
         tests:
           - not_null
       - name: poke_name
         data_type: VARCHAR
-        description: A pokemon's name
+        description: '{{ doc("poke_name") }}'
         tests:
           - not_null
       - name: poke_id
         data_type: INTEGER
-        description: A pokemon's identifier
+        description: '{{ doc("poke_id") }}'
         tests:
           - not_null
     tests:

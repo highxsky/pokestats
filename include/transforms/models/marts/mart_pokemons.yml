@@ -4,18 +4,18 @@ models:
     columns:
       - name: poke_gen
         data_type: SMALLINT
-        description: A pokemon's generation
+        description: '{{ doc("poke_gen") }}'
         tests:
           - not_null
       - name: poke_id
         data_type: INTEGER
-        description: A pokemon's identifier
+        description: '{{ doc("poke_id") }}'
         tests:
           - unique
           - not_null
       - name: poke_name
         data_type: VARCHAR
-        description: A pokemon's name
+        description: '{{ doc("poke_name") }}'
         tests:
           - not_null
       - name: height

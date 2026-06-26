@@ -10,12 +10,12 @@ models:
           - not_null
       - name: poke_id
         data_type: INTEGER
-        description: A pokemon's identifier
+        description: '{{ doc("poke_id") }}'
         tests:
           - not_null
       - name: move_id
         data_type: INTEGER
-        description: The move identifier (parsed from URL)
+        description: '{{ doc("move_id") }}'
         tests:
           - not_null
 sources: []

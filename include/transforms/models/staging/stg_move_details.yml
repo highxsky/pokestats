@@ -3,18 +3,18 @@ models:
   - name: stg_move_details
     columns:
       - name: fetch_date
-        description: Datetime when the move was fetched
+        description: '{{ doc("fetch_date") }}'
         data_type: TIMESTAMP
         tests:
           - not_null
       - name: move_id
-        description: The move identifier
+        description: '{{ doc("move_id") }}'
         data_type: INTEGER
         tests:
           - unique
           - not_null
       - name: move_name
-        description: The move name (e.g. pound, tackle)
+        description: '{{ doc("move_name") }}'
         data_type: VARCHAR
         tests:
           - not_null
@@ -25,7 +25,7 @@ models:
         description: The move's accuracy percentage (NULL for moves that can't miss)
         data_type: INTEGER
       - name: pp
-        description: Power points — number of times the move can be used
+        description: '{{ doc("pp") }}'
         data_type: INTEGER
         tests:
           - not_null
@@ -35,7 +35,7 @@ models:
         tests:
           - not_null
       - name: type
-        description: The move's elemental type (e.g. normal, fire)
+        description: '{{ doc("type") }}'
         data_type: VARCHAR
         tests:
           - not_null
@@ -48,7 +48,7 @@ models:
               arguments:
                 values: [physical, special, status]
       - name: poke_gen
-        description: The generation this move was introduced in
+        description: '{{ doc("poke_gen") }}'
         data_type: INTEGER
         tests:
           - not_null

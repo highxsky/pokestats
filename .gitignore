@@ -240,3 +240,11 @@ __marimo__/
 
 # Streamlit
 **/.streamlit/secrets.toml
+
+# Local DuckDB database files
+*.duckdb
+*.duckdb.wal
+*.duckdb.tmp/
+
+# Raw data archive (Parquet backups / landing zone — data, not code)
+include/archive/

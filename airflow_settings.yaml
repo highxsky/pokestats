@@ -9,9 +9,10 @@ airflow:
   connections:
     - conn_id: motherduck_conn
       conn_type: duckdb
-      conn_host: md:poke_db
+      # conn_host: md:poke_db
+      conn_host: ${DUCKDB_PATH}
       conn_extra:
-        motherduck_token: ${motherduck_token}
+        motherduck_token: ${MOTHERDUCK_TOKEN}
   pools:
     - pool_name:
       pool_slot:

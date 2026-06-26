@@ -16,7 +16,7 @@ models:
           - not_null
       - name: poke_gen
         data_type: INTEGER
-        description: The generation this version group belongs to
+        description: '{{ doc("poke_gen") }}'
         tests:
           - not_null
 sources: []

@@ -5,13 +5,13 @@ models:
     columns:
       - name: move_id
         data_type: INTEGER
-        description: The move identifier
+        description: '{{ doc("move_id") }}'
         tests:
           - unique
           - not_null
       - name: move_name
         data_type: VARCHAR
-        description: The move name
+        description: '{{ doc("move_name") }}'
         tests:
           - not_null
       - name: power
@@ -22,7 +22,7 @@ models:
         description: Accuracy percentage (NULL for moves that can't miss)
       - name: pp
         data_type: INTEGER
-        description: Power points
+        description: '{{ doc("pp") }}'
         tests:
           - not_null
       - name: priority
@@ -32,7 +32,7 @@ models:
           - not_null
       - name: type
         data_type: VARCHAR
-        description: Elemental type
+        description: '{{ doc("type") }}'
         tests:
           - not_null
       - name: damage_class
@@ -45,7 +45,7 @@ models:
                 values: [physical, special, status]
       - name: poke_gen
         data_type: INTEGER
-        description: Generation this move was introduced in
+        description: '{{ doc("poke_gen") }}'
         tests:
           - not_null
 sources: []

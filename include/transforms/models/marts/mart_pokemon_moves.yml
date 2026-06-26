@@ -11,9 +11,9 @@ models:
           - not_null
       - name: poke_id
         data_type: INTEGER
-        description: A pokemon's identifier
+        description: '{{ doc("poke_id") }}'
       - name: move_id
         data_type: INTEGER
-        description: The move identifier
+        description: '{{ doc("move_id") }}'
 sources: []
 seeds: []

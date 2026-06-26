@@ -3,12 +3,12 @@ models:
   - name: stg_pokemon_moves
     columns:
       - name: fetch_date
-        description: Datetime when a pokemon was fetched
+        description: '{{ doc("fetch_date") }}'
         data_type: TIMESTAMP
         tests:
           - not_null
       - name: poke_id
-        description: A pokemon's identifier
+        description: '{{ doc("poke_id") }}'
         data_type: INTEGER
         tests:
           - not_null

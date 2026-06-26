@@ -4,12 +4,12 @@ models:
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
-        description: Datetime when the generation was fetched
+        description: '{{ doc("fetch_date") }}'
         tests:
           - not_null
       - name: poke_gen
         data_type: INTEGER
-        description: The generation identifier
+        description: '{{ doc("poke_gen") }}'
         tests:
           - unique
           - not_null

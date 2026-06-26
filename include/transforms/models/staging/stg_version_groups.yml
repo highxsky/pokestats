@@ -4,7 +4,7 @@ models:
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
-        description: Datetime when the version group was fetched
+        description: '{{ doc("fetch_date") }}'
         tests:
           - not_null
       - name: version_group_id
@@ -19,7 +19,7 @@ models:
           - not_null
       - name: poke_gen
         data_type: INTEGER
-        description: The generation this version group belongs to
+        description: '{{ doc("poke_gen") }}'
         tests:
           - not_null
       - name: version_id

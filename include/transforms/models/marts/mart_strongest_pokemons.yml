@@ -6,36 +6,36 @@ models:
     columns:
       - name: poke_gen
         data_type: SMALLINT
-        description: A pokemon's generation
+        description: '{{ doc("poke_gen") }}'
       - name: poke_id
         data_type: INTEGER
-        description: A pokemon's identifier
+        description: '{{ doc("poke_id") }}'
         tests:
           - unique
           - not_null
       - name: poke_name
         data_type: VARCHAR
-        description: A pokemon's name
+        description: '{{ doc("poke_name") }}'
         tests:
           - not_null
       - name: hp
         data_type: INTEGER
-        description: A pokemon's HP stat
+        description: '{{ doc("hp") }}'
       - name: attack
         data_type: INTEGER
-        description: A pokemon's attack stat
+        description: '{{ doc("attack") }}'
       - name: defense
         data_type: INTEGER
-        description: A pokemon's defense stat
+        description: '{{ doc("defense") }}'
       - name: special_attack
         data_type: INTEGER
-        description: A pokemon's special attack stat
+        description: '{{ doc("special_attack") }}'
       - name: special_defense
         data_type: INTEGER
-        description: A pokemon's special defense stat
+        description: '{{ doc("special_defense") }}'
       - name: speed
         data_type: INTEGER
-        description: A pokemon's speed stat
+        description: '{{ doc("speed") }}'
       - name: total_stat_points
         data_type: INTEGER
         description: Sum of all six stats

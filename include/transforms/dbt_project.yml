@@ -24,14 +24,19 @@ models:
       +materialized: view
       +schema: staging
       +meta:
-        dbt-osmosis: "schema.yml"
+        dbt-osmosis: "{model}.yml"
     intermediate:
       +materialized: view
       +schema: intermediate
       +meta:
-        dbt-osmosis: "schema.yml"
+        dbt-osmosis: "{model}.yml"
     marts:
       +materialized: table
       +schema: marts
       +meta:
-        dbt-osmosis: "schema.yml"
+        dbt-osmosis: "{model}.yml"
+
+seeds:
+  transforms:
+    +meta:
+      dbt-osmosis: "{model}.yml"

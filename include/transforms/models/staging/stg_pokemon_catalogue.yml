@@ -1,0 +1,32 @@
+version: 2
+models:
+  - name: stg_pokemon_catalogue
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
+      - name: poke_gen
+        data_type: INTEGER
+        description: A pokemon's generation
+        tests:
+          - not_null
+      - name: poke_name
+        data_type: VARCHAR
+        description: A pokemon's name
+        tests:
+          - not_null
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - poke_id
+              - fetch_date
+sources: []
+seeds: []

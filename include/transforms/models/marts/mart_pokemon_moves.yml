@@ -1,0 +1,19 @@
+version: 2
+models:
+  - name: mart_pokemon_moves
+    description: One row per pokemon x move
+    columns:
+      - name: pokemon_move_id
+        data_type: VARCHAR
+        description: Surrogate key (poke_id, move_id)
+        tests:
+          - unique
+          - not_null
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+      - name: move_id
+        data_type: INTEGER
+        description: The move identifier
+sources: []
+seeds: []

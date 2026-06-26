@@ -1,0 +1,52 @@
+version: 2
+models:
+  - name: mart_moves
+    description: One row per move with its core attributes
+    columns:
+      - name: move_id
+        data_type: INTEGER
+        description: The move identifier
+        tests:
+          - unique
+          - not_null
+      - name: move_name
+        data_type: VARCHAR
+        description: The move name
+        tests:
+          - not_null
+      - name: power
+        data_type: INTEGER
+        description: Base power (NULL for status moves)
+      - name: accuracy
+        data_type: INTEGER
+        description: Accuracy percentage (NULL for moves that can't miss)
+      - name: pp
+        data_type: INTEGER
+        description: Power points
+        tests:
+          - not_null
+      - name: priority
+        data_type: INTEGER
+        description: Move priority bracket
+        tests:
+          - not_null
+      - name: type
+        data_type: VARCHAR
+        description: Elemental type
+        tests:
+          - not_null
+      - name: damage_class
+        data_type: VARCHAR
+        description: Physical, special, or status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [physical, special, status]
+      - name: poke_gen
+        data_type: INTEGER
+        description: Generation this move was introduced in
+        tests:
+          - not_null
+sources: []
+seeds: []

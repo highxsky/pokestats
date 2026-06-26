@@ -1,0 +1,43 @@
+version: 2
+models:
+  - name: stg_pokemons
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
+      - name: poke_gen
+        description: A pokemon's generation
+        data_type: SMALLINT
+        tests:
+          - not_null
+      - name: poke_id
+        description: A pokemon's identifier
+        data_type: INTEGER
+        tests:
+          - unique
+          - not_null
+      - name: poke_name
+        description: A pokemon's name
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: height
+        description: A pokemon's height (in meters)
+        data_type: DOUBLE
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: weight
+        description: A pokemon's weight (in kilograms)
+        data_type: DOUBLE
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 10000
+sources: []
+seeds: []

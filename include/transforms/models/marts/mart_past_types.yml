@@ -1,0 +1,28 @@
+version: 2
+models:
+  - name: mart_past_types
+    description: Full type history per pokemon per slot, with generation-based validity windows
+    columns:
+      - name: type_id
+        data_type: VARCHAR
+        description: Surrogate key (hash of poke_id, slot, valid_from_gen)
+        tests:
+          - unique
+          - not_null
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+      - name: slot
+        data_type: INTEGER
+        description: Type slot (1 = primary, 2 = secondary)
+      - name: type
+        data_type: VARCHAR
+        description: The type name
+      - name: valid_from_gen
+        data_type: INTEGER
+        description: The generation this type assignment became active
+      - name: valid_to_gen
+        data_type: INTEGER
+        description: The last generation this type assignment was active (NULL = still current)
+sources: []
+seeds: []

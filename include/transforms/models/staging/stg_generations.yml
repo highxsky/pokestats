@@ -1,0 +1,27 @@
+version: 2
+models:
+  - name: stg_generations
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when the generation was fetched
+        tests:
+          - not_null
+      - name: poke_gen
+        data_type: INTEGER
+        description: The generation identifier
+        tests:
+          - unique
+          - not_null
+      - name: gen_api_name
+        data_type: VARCHAR
+        description: The generation's API name (e.g. generation-i)
+        tests:
+          - not_null
+      - name: gen_name
+        data_type: VARCHAR
+        description: The generation's English display name (e.g. Generation I)
+        tests:
+          - not_null
+sources: []
+seeds: []

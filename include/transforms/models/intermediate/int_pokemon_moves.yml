@@ -1,0 +1,22 @@
+version: 2
+models:
+  - name: int_pokemon_moves
+    columns:
+      - name: pokemon_move_id
+        data_type: VARCHAR
+        description: Surrogate key (poke_id, move_id)
+        tests:
+          - unique
+          - not_null
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+        tests:
+          - not_null
+      - name: move_id
+        data_type: INTEGER
+        description: The move identifier (parsed from URL)
+        tests:
+          - not_null
+sources: []
+seeds: []

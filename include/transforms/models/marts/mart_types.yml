@@ -1,0 +1,22 @@
+version: 2
+models:
+  - name: mart_types
+    description: Current type assignment per pokemon per slot
+    columns:
+      - name: type_id
+        data_type: VARCHAR
+        description: Surrogate key (hash of poke_id, slot)
+        tests:
+          - unique
+          - not_null
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+      - name: slot
+        data_type: INTEGER
+        description: Type slot (1 = primary, 2 = secondary)
+      - name: type
+        data_type: VARCHAR
+        description: The type name
+sources: []
+seeds: []

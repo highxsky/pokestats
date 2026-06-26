@@ -1,0 +1,44 @@
+version: 2
+models:
+  - name: int_past_stats
+    columns:
+      - name: past_stat_id
+        data_type: VARCHAR
+        description: Surrogate key for a pokemon's past stat
+        tests:
+          - unique
+          - not_null
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+        tests:
+          - not_null
+      - name: poke_gen
+        data_type: INTEGER
+        description: Generation of a pokemon
+        tests:
+          - not_null
+      - name: stat_name
+        data_type: VARCHAR
+        description: A pokemon's stat name (e.g. attack, speed)
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [hp, attack, defense, special, special-attack, special-defense, speed]
+      - name: stat_value
+        data_type: INTEGER
+        description: A pokemon's stat value (e.g. 85)
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+sources: []
+seeds: []

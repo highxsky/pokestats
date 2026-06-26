@@ -1,0 +1,23 @@
+version: 2
+models:
+  - name: mart_version_groups
+    description: One row per version group with its generation
+    columns:
+      - name: version_group_id
+        data_type: INTEGER
+        description: The version group identifier
+        tests:
+          - unique
+          - not_null
+      - name: version_group_name
+        data_type: VARCHAR
+        description: The version group name (e.g. red-blue)
+        tests:
+          - not_null
+      - name: poke_gen
+        data_type: INTEGER
+        description: The generation this version group belongs to
+        tests:
+          - not_null
+sources: []
+seeds: []

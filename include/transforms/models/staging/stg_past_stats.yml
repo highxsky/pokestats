@@ -1,0 +1,19 @@
+version: 2
+models:
+  - name: stg_past_stats
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
+      - name: poke_id
+        description: A pokemon's identifier
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: past_stats
+        description: A pokemon's past stats
+        data_type: JSON
+sources: []
+seeds: []

@@ -1,0 +1,36 @@
+version: 2
+models:
+  - name: mart_pokemons
+    columns:
+      - name: poke_gen
+        data_type: SMALLINT
+        description: A pokemon's generation
+        tests:
+          - not_null
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+        tests:
+          - unique
+          - not_null
+      - name: poke_name
+        data_type: VARCHAR
+        description: A pokemon's name
+        tests:
+          - not_null
+      - name: height
+        data_type: DOUBLE
+        description: A pokemon's height (in meters)
+        tests:
+          - min_value:
+              arguments:
+                min_val: 0
+      - name: weight
+        data_type: DOUBLE
+        description: A pokemon's weight (in kilograms)
+        tests:
+          - min_value:
+              arguments:
+                min_val: 0
+sources: []
+seeds: []

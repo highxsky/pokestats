@@ -1,0 +1,60 @@
+version: 2
+models:
+  - name: mart_stats
+    columns:
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+        tests:
+          - unique
+          - not_null
+      - name: hp
+        data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+      - name: attack
+        data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+      - name: defense
+        data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+      - name: special_attack
+        data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+      - name: special_defense
+        data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+      - name: speed
+        data_type: INTEGER
+        tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+      - name: total_stat_points
+        data_type: INTEGER
+        tests:
+          - min_value:
+              arguments:
+                min_val: 0
+sources: []
+seeds: []

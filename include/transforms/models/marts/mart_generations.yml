@@ -1,0 +1,18 @@
+version: 2
+models:
+  - name: mart_generations
+    description: One row per Pokemon generation with its English display name
+    columns:
+      - name: poke_gen
+        data_type: INTEGER
+        description: The generation identifier
+        tests:
+          - unique
+          - not_null
+      - name: gen_name
+        data_type: VARCHAR
+        description: The generation's English display name (e.g. Generation I)
+        tests:
+          - not_null
+sources: []
+seeds: []

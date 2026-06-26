@@ -1,0 +1,27 @@
+version: 2
+models:
+  - name: mart_version_group_versions
+    description: Mapping of individual game versions to their version groups
+    columns:
+      - name: version_id
+        data_type: INTEGER
+        description: The version identifier
+        tests:
+          - unique
+          - not_null
+      - name: version_name
+        data_type: VARCHAR
+        description: The version name (e.g. red)
+        tests:
+          - not_null
+      - name: version_group_id
+        data_type: INTEGER
+        description: Foreign key to mart_version_groups
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('mart_version_groups')
+                field: version_group_id
+sources: []
+seeds: []

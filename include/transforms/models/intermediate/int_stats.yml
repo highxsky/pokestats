@@ -1,0 +1,65 @@
+version: 2
+models:
+  - name: int_stats
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when a pokemon was fetched
+        tests:
+          - not_null
+      - name: poke_id
+        data_type: INTEGER
+        description: A pokemon's identifier
+        tests:
+          - unique
+          - not_null
+      - name: hp
+        data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+      - name: attack
+        data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+      - name: defense
+        data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+      - name: special_attack
+        data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+      - name: special_defense
+        data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+      - name: speed
+        data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
+sources: []
+seeds: []

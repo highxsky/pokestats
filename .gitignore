@@ -10,6 +10,7 @@ include/archive/
 # Claude docs - Internal purposes
 docs/dbt-cert-practice-plan.md
 docs/dbt-project-assessment-framework.md
+docs/dbt-documentation-review.md
 
 # Airflow
 airflow-webserver.pid

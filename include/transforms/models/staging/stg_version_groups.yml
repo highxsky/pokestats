@@ -1,0 +1,36 @@
+version: 2
+models:
+  - name: stg_version_groups
+    columns:
+      - name: fetch_date
+        data_type: TIMESTAMP
+        description: Datetime when the version group was fetched
+        tests:
+          - not_null
+      - name: version_group_id
+        data_type: INTEGER
+        description: The version group identifier
+        tests:
+          - not_null
+      - name: version_group_name
+        data_type: VARCHAR
+        description: The version group name (e.g. red-blue)
+        tests:
+          - not_null
+      - name: poke_gen
+        data_type: INTEGER
+        description: The generation this version group belongs to
+        tests:
+          - not_null
+      - name: version_id
+        data_type: INTEGER
+        description: The version identifier
+        tests:
+          - not_null
+      - name: version_name
+        data_type: VARCHAR
+        description: The version name (e.g. red)
+        tests:
+          - not_null
+sources: []
+seeds: []

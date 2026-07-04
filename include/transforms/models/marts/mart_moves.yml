@@ -16,10 +16,10 @@ models:
           - not_null
       - name: power
         data_type: INTEGER
-        description: Base power (NULL for status moves)
+        description: '{{ doc("power") }}'
       - name: accuracy
         data_type: INTEGER
-        description: Accuracy percentage (NULL for moves that can't miss)
+        description: '{{ doc("accuracy") }}'
       - name: pp
         data_type: INTEGER
         description: '{{ doc("pp") }}'
@@ -27,7 +27,7 @@ models:
           - not_null
       - name: priority
         data_type: INTEGER
-        description: Move priority bracket
+        description: '{{ doc("priority") }}'
         tests:
           - not_null
       - name: type
@@ -37,7 +37,7 @@ models:
           - not_null
       - name: damage_class
         data_type: VARCHAR
-        description: Physical, special, or status
+        description: '{{ doc("damage_class") }}'
         tests:
           - not_null
           - accepted_values:

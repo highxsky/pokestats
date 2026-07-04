@@ -4,7 +4,7 @@ models:
     columns:
       - name: pokemon_move_id
         data_type: VARCHAR
-        description: Surrogate key (poke_id, move_id)
+        description: '{{ doc("pokemon_move_id") }}'
         tests:
           - unique
           - not_null

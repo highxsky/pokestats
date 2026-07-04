@@ -38,7 +38,7 @@ models:
         description: '{{ doc("speed") }}'
       - name: total_stat_points
         data_type: INTEGER
-        description: Sum of all six stats
+        description: '{{ doc("total_stat_points") }}'
         tests:
           - min_value:
               arguments:

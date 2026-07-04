@@ -20,14 +20,14 @@ models:
           - not_null
       - name: height
         data_type: DOUBLE
-        description: A pokemon's height (in meters)
+        description: '{{ doc("height") }}'
         tests:
           - min_value:
               arguments:
                 min_val: 0
       - name: weight
         data_type: DOUBLE
-        description: A pokemon's weight (in kilograms)
+        description: '{{ doc("weight") }}'
         tests:
           - min_value:
               arguments:

@@ -36,11 +36,11 @@ models:
         description: '{{ doc("type") }}'
       - name: valid_from_gen
         data_type: INTEGER
-        description: Generation from which this type assignment is valid
+        description: '{{ doc("valid_from_gen") }}'
         tests:
           - not_null
       - name: valid_to_gen
         data_type: INTEGER
-        description: Generation until which this type assignment was valid (NULL if current)
+        description: '{{ doc("valid_to_gen") }}'
 sources: []
 seeds: []

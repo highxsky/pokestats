@@ -57,6 +57,7 @@ models:
                 max_value: 255
         description: '{{ doc("speed") }}'
       - name: total_stat_points
+        description: '{{ doc("total_stat_points") }}'
         data_type: INTEGER
         tests:
           - min_value:

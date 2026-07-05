@@ -11,7 +11,7 @@ models:
           - not_null
       - name: gen_name
         data_type: VARCHAR
-        description: The generation's English display name (e.g. Generation I)
+        description: '{{ doc("gen_name") }}'
         tests:
           - not_null
 sources: []

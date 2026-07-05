@@ -9,12 +9,12 @@ models:
           - not_null
       - name: version_group_id
         data_type: INTEGER
-        description: The version group identifier
+        description: '{{ doc("version_group_id") }}'
         tests:
           - not_null
       - name: version_group_name
         data_type: VARCHAR
-        description: The version group name (e.g. red-blue)
+        description: '{{ doc("version_group_name") }}'
         tests:
           - not_null
       - name: poke_gen
@@ -24,12 +24,12 @@ models:
           - not_null
       - name: version_id
         data_type: INTEGER
-        description: The version identifier
+        description: '{{ doc("version_id") }}'
         tests:
           - not_null
       - name: version_name
         data_type: VARCHAR
-        description: The version name (e.g. red)
+        description: '{{ doc("version_name") }}'
         tests:
           - not_null
 sources: []

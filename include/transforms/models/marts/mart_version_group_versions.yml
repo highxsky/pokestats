@@ -5,18 +5,18 @@ models:
     columns:
       - name: version_id
         data_type: INTEGER
-        description: The version identifier
+        description: '{{ doc("version_id") }}'
         tests:
           - unique
           - not_null
       - name: version_name
         data_type: VARCHAR
-        description: The version name (e.g. red)
+        description: '{{ doc("version_name") }}'
         tests:
           - not_null
       - name: version_group_id
         data_type: INTEGER
-        description: Foreign key to mart_version_groups
+        description: '{{ doc("version_group_id") }}'
         tests:
           - not_null
           - relationships:

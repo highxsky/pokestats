@@ -15,36 +15,36 @@ models:
           - not_null
       - name: description
         data_type: VARCHAR
-        description: English Pokedex flavor text (latest version)
+        description: '{{ doc("poke_description") }}'
       - name: genus
         data_type: VARCHAR
-        description: English classification (e.g. Mouse Pokemon)
+        description: '{{ doc("genus") }}'
       - name: is_legendary
         data_type: BOOLEAN
-        description: Whether the pokemon is legendary
+        description: '{{ doc("is_legendary") }}'
         tests:
           - not_null
       - name: is_mythical
         data_type: BOOLEAN
-        description: Whether the pokemon is mythical
+        description: '{{ doc("is_mythical") }}'
         tests:
           - not_null
       - name: is_baby
         data_type: BOOLEAN
-        description: Whether the pokemon is a baby form
+        description: '{{ doc("is_baby") }}'
         tests:
           - not_null
       - name: color
         data_type: VARCHAR
-        description: The pokemon's canonical color
+        description: '{{ doc("color") }}'
       - name: habitat
         data_type: VARCHAR
-        description: The pokemon's habitat (e.g. forest, cave)
+        description: '{{ doc("habitat") }}'
       - name: evolves_from_name
         data_type: VARCHAR
-        description: Name of the species this pokemon evolves from (NULL if base form)
+        description: '{{ doc("evolves_from_name") }}'
       - name: evolves_from_id
         data_type: INTEGER
-        description: ID of the species this pokemon evolves from (NULL if base form)
+        description: '{{ doc("evolves_from_id") }}'
 sources: []
 seeds: []

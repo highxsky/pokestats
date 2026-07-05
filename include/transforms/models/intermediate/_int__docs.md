@@ -29,3 +29,15 @@ int: a Pokémon's special defense stats, can range from 1 to 255, although most 
 {% docs speed %}
 int: a Pokémon's speed stats, can range from 1 to 255, although most pokemons have stats between 30 and 120.
 {% enddocs %}
+
+{% docs pokemon_move_id %}
+Surrogate key identifying a Pokémon's move, built from (poke_id, move_id).
+{% enddocs %}
+
+{% docs valid_from_gen %}
+The generation from which a type assignment became active.
+{% enddocs %}
+
+{% docs valid_to_gen %}
+The last generation a type assignment was active (NULL if still current).
+{% enddocs %}

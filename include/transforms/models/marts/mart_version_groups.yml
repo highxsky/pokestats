@@ -5,13 +5,13 @@ models:
     columns:
       - name: version_group_id
         data_type: INTEGER
-        description: The version group identifier
+        description: '{{ doc("version_group_id") }}'
         tests:
           - unique
           - not_null
       - name: version_group_name
         data_type: VARCHAR
-        description: The version group name (e.g. red-blue)
+        description: '{{ doc("version_group_name") }}'
         tests:
           - not_null
       - name: poke_gen

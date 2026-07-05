@@ -20,9 +20,9 @@ models:
         description: '{{ doc("type") }}'
       - name: valid_from_gen
         data_type: INTEGER
-        description: The generation this type assignment became active
+        description: '{{ doc("valid_from_gen") }}'
       - name: valid_to_gen
         data_type: INTEGER
-        description: The last generation this type assignment was active (NULL = still current)
+        description: '{{ doc("valid_to_gen") }}'
 sources: []
 seeds: []

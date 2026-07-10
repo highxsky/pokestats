@@ -8,13 +8,22 @@ WITH source AS (
     FROM {{ ref('stg_pokemon_moves') }}
 ),
 
+-- Step 1: parse JSON array, fetch only required column
+unnested AS (
+    SELECT
+        fetch_date,
+        poke_id,
+        UNNEST(FROM_JSON(moves, '[{"move": {"url": "VARCHAR"}}]')) AS m
+    FROM source
+),
+
+-- Step 2: extract the numeric move_id from each move url
 parsed AS (
     SELECT DISTINCT
         fetch_date,
         poke_id,
-        CAST(STRING_SPLIT(RTRIM(move->>'$.move.url', '/'), '/')[-1] AS INT) AS move_id
-    FROM source,
-        UNNEST(from_json(source.moves, '["json"]')) AS t1(move)
+        CAST(STRING_SPLIT(RTRIM(m.move.url, '/'), '/')[-1] AS INT) AS move_id
+    FROM unnested
 )
 
 SELECT

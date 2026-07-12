@@ -1,19 +1,22 @@
 {{ config(materialized="view") }}
 
-WITH raw_input AS (
+WITH parsed AS (
   SELECT
     fetch_date,
-    cast(payload->>'$.id' AS INT) AS poke_gen,
-    payload->>'$.name' AS gen_api_name,
-    payload->'$.names' AS names
+    from_json(
+      payload,
+      '{
+        "id": "INT",
+        "name": "VARCHAR",
+        "names": [{"name": "VARCHAR", "language": {"name": "VARCHAR"}}],
+      }'
+    ) as p
   FROM {{ source('raw', 'generations') }}
 )
 
 SELECT
-  ri.fetch_date,
-  ri.poke_gen,
-  ri.gen_api_name,
-  je.value->>'$.name' AS gen_name
-FROM raw_input ri,
-json_each(ri.names) AS je
-WHERE je.value->'$.language'->>'$.name' = 'en'
+  fetch_date,
+  p.id as poke_gen,
+  p.name as gen_api_name,
+  list_filter(p.names, lambda n: n.language.name = 'en')[-1].name as gen_name
+FROM parsed

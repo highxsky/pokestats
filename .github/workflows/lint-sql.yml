@@ -1,0 +1,31 @@
+name: Lint SQL
+
+on:
+  pull_request:
+    paths:
+      - "include/transforms/**/*.sql"
+      - ".sqlfluff"
+      - ".github/workflows/lint-sql.yml"
+  push:
+    branches: [main]
+    paths:
+      - "include/transforms/**/*.sql"
+
+jobs:
+  sqlfluff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install sqlfluff and dbt
+        run: pip install sqlfluff==4.2.2 sqlfluff-templater-dbt==4.2.2 dbt-duckdb
+
+      - name: Install dbt packages
+        run: dbt deps --project-dir include/transforms --profiles-dir include/transforms
+
+      - name: Lint models
+        run: sqlfluff lint include/transforms/models

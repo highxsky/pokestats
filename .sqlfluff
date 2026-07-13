@@ -1,0 +1,40 @@
+[sqlfluff]
+dialect = duckdb
+templater = dbt
+max_line_length = 120
+# RF03 misfires on duckdb struct access: in `p.id` after from_json(payload),
+# `p` is a struct column, but sqlfluff assumes it's a table qualifier and
+# flags single-table selects as inconsistently qualified.
+exclude_rules = RF03
+
+[sqlfluff:templater:dbt]
+project_dir = include/transforms
+profiles_dir = include/transforms
+target = dev
+
+[sqlfluff:indentation]
+indent_unit = space
+tab_space_size = 2
+
+# commas at the end of the line, not the start
+[sqlfluff:layout:type:comma]
+line_position = trailing
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.functions]
+extended_capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.identifiers]
+extended_capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.literals]
+capitalisation_policy = lower
+
+# every derived column must say AS explicitly
+[sqlfluff:rules:aliasing.column]
+aliasing = explicit
+
+[sqlfluff:rules:aliasing.table]
+aliasing = explicit

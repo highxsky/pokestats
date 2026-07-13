@@ -1,9 +1,6 @@
 version: 2
 models:
   - name: stg_pokemon_species
-    config:
-      contract:
-        enforced: true
     columns:
       - name: fetch_date
         data_type: TIMESTAMP

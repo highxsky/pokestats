@@ -1,7 +1,7 @@
 {{ config(materialized="view") }}
 
-WITH parsed AS (
-  SELECT
+with parsed as (
+  select
     fetch_date,
     from_json(
       payload,
@@ -11,12 +11,12 @@ WITH parsed AS (
         "names": [{"name": "VARCHAR", "language": {"name": "VARCHAR"}}],
       }'
     ) as p
-  FROM {{ source('raw', 'generations') }}
+  from {{ source('raw', 'generations') }}
 )
 
-SELECT
+select
   fetch_date,
   p.id as poke_gen,
   p.name as gen_api_name,
   list_filter(p.names, lambda n: n.language.name = 'en')[-1].name as gen_name
-FROM parsed
+from parsed

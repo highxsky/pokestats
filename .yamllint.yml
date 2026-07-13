@@ -1,0 +1,17 @@
+extends: default
+
+rules:
+  line-length:
+    max: 120
+  # GitHub workflows use `on:` as a key; without this, yamllint flags it
+  # because bare `on` is a YAML boolean.
+  truthy:
+    check-keys: false
+  # don't require the `---` marker at the top of every file
+  document-start: disable
+
+ignore:
+  - include/transforms/dbt_packages/
+  - include/transforms/target/
+  - logs/
+  - airflow_settings.yaml

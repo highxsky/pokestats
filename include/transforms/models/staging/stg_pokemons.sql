@@ -1,13 +1,48 @@
--- Query to fetch from raw to staging and materialize as view
-{{ config(materialized="view") }}
 
-SELECT
-    pd.fetch_date,
-    pc.poke_gen,
-    pd.id as poke_id,
-    pd.payload->>'$.name' AS poke_name,
-    ROUND(CAST(pd.payload->>'$.height' AS INT) / 10, 2) AS height,
-    ROUND(CAST(pd.payload->>'$.weight' AS INT) / 10, 2) AS weight
-FROM {{ source('raw', 'pokemons') }} pd
-LEFT JOIN {{ ref('stg_pokemon_catalogue') }} pc
-    ON pd.id = pc.poke_id
+-- Extracting required fields from raw pokemons source
+with parsed as (
+    SELECT
+        fetch_date,
+        id as poke_id,
+        from_json(
+            payload,
+            '{
+                "name": "VARCHAR",
+                "height": "INT",
+                "weight": "INT",
+                "moves": [{"move": {"url": "VARCHAR"}}],
+                "stats": [{"base_stat": "INT", "stat": {"name": "VARCHAR"}}],
+                "types": [{"slot": "INT", "type": {"name": "VARCHAR"}}],
+                "past_stats": [{
+                    "generation": {"url": "VARCHAR"},
+                    "stats": [{
+                        "base_stat": "INT", 
+                        "stat": {"name": "VARCHAR"}
+                    }]
+                }],
+                "past_types": [{
+                    "generation": {"url": "VARCHAR"},
+                    "types": [{
+                        "slot": "INT",
+                        "type": {"name": "VARCHAR"}
+                    }]
+                }]
+            }'
+        ) as p
+    FROM {{ source('raw', 'pokemons') }}
+)
+
+-- Pre-processing and casting
+
+select 
+    fetch_date,
+    poke_id,
+    p.name as poke_name,
+    ROUND(p.height / 10, 2) AS height,
+    ROUND(p.weight / 10, 2) AS "weight",
+    p.moves,
+    p.stats,
+    p.types,
+    p.past_stats,
+    p.past_types
+from parsed

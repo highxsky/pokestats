@@ -13,7 +13,7 @@ models:
         tests:
           - unique
           - not_null
-      - name: description
+      - name: poke_description
         data_type: VARCHAR
         description: '{{ doc("poke_description") }}'
       - name: genus

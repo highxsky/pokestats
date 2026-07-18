@@ -6,9 +6,9 @@ models:
         description: '{{ doc("fetch_date") }}'
         tests:
           - not_null
-      - name: poke_gen
+      - name: gen_id
         data_type: INTEGER
-        description: '{{ doc("poke_gen") }}'
+        description: '{{ doc("gen_id") }}'
         tests:
           - unique
           - not_null

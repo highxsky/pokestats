@@ -34,8 +34,8 @@ models:
         data_type: INTEGER
         tests:
           - not_null
-      - name: type
-        description: '{{ doc("type") }}'
+      - name: type_name
+        description: '{{ doc("type_name") }}'
         data_type: VARCHAR
         tests:
           - not_null
@@ -47,8 +47,8 @@ models:
           - accepted_values:
               arguments:
                 values: [physical, special, status]
-      - name: poke_gen
-        description: '{{ doc("poke_gen") }}'
+      - name: gen_id
+        description: '{{ doc("gen_id") }}'
         data_type: INTEGER
         tests:
           - not_null

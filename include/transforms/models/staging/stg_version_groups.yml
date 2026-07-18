@@ -1,4 +1,3 @@
-version: 2
 models:
   - name: stg_version_groups
     columns:
@@ -17,9 +16,9 @@ models:
         description: '{{ doc("version_group_name") }}'
         tests:
           - not_null
-      - name: poke_gen
+      - name: gen_id
         data_type: INTEGER
-        description: '{{ doc("poke_gen") }}'
+        description: '{{ doc("gen_id") }}'
         tests:
           - not_null
       - name: version_id

@@ -4,17 +4,17 @@
 -- Step 2 - parsed input (picking what's needed / relevant)
 -- Step 3 - processing + casting types
 
-WITH raw_input AS (
-  SELECT
+with raw_input as (
+  select
     fetch_date,
-    id AS poke_id,
+    id as poke_id,
     payload
-  FROM {{ source('raw', 'pokemon_species') }}
-  QUALIFY ROW_NUMBER() OVER (PARTITION BY id ORDER BY fetch_date DESC) = 1
+  from {{ source('raw', 'pokemon_species') }}
+  qualify row_number() over (partition by id order by fetch_date desc) = 1
 ),
 
-parsed AS (
-  SELECT
+parsed as (
+  select
     fetch_date,
     poke_id,
     from_json(
@@ -30,25 +30,25 @@ parsed AS (
         "evolves_from_species": {"name": "VARCHAR", "url": "VARCHAR"},        
       }'
     ) as p
-  FROM raw_input
+  from raw_input
 )
 
-SELECT
+select
   fetch_date,
   poke_id,
-  REPLACE(
-    REPLACE(
+  p.is_legendary,
+  p.is_mythical,
+  p.is_baby,
+  p.color.name as color,
+  p.habitat.name as habitat,
+  p.evolves_from_species.name as evolves_from_name,
+  replace(
+    replace(
       list_filter(p.flavor_text_entries, lambda e: e.language.name = 'en')[-1].flavor_text,
       chr(12), ' '
     ),
     chr(10), ' '
-  ) AS "description",
-  list_filter(p.genera, lambda g: g.language.name = 'en')[-1].genus AS genus,
-  p.is_legendary,
-  p.is_mythical,
-  p.is_baby,
-  p.color.name AS color,
-  p.habitat.name AS habitat,
-  p.evolves_from_species.name AS evolves_from_name,
+  ) as poke_description,
+  list_filter(p.genera, lambda g: g.language.name = 'en')[-1].genus as genus,
   split_part(p.evolves_from_species.url, '/', -2)::INT as evolves_from_id
-FROM parsed
+from parsed

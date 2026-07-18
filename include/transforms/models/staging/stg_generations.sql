@@ -1,4 +1,4 @@
-{{ config(materialized="view") }}
+-- One row per Pokémon generation, with its API name and English display name.
 
 with parsed as (
   select
@@ -16,7 +16,8 @@ with parsed as (
 
 select
   fetch_date,
-  p.id as poke_gen,
+  p.id as gen_id,
   p.name as gen_api_name,
+  -- English display name from the localised names array
   list_filter(p.names, lambda n: n.language.name = 'en')[-1].name as gen_name
 from parsed

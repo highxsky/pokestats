@@ -10,10 +10,20 @@ int: a Pokémon's unique identifier, sourced from the PokéAPI 'id' field.
 str: name of a Pokémon, in English.
 {% enddocs %}
 
+{% docs gen_id %}
+int: a generation is a grouping of the Pokémon games that separates them based on the Pokémon they include, e.g. gen 1 for Pokémon red/blue.
+{% enddocs %}
+
+{# TODO: remove `poke_gen` once the mart layer is refactored to reference `gen_id`. #}
 {% docs poke_gen %}
 int: a generation is a grouping of the Pokémon games that separates them based on the Pokémon they include, e.g. gen 1 for Pokémon red/blue.
 {% enddocs %}
 
+{% docs type_name %}
+str: each Pokémon has either one type or two types (primary AND secondary), such as normal or normal (primary) / fire (secondary).
+{% enddocs %}
+
+{# TODO: remove `type` once the mart layer is refactored to reference `type_name`. #}
 {% docs type %}
 str: each Pokémon has either one type or two types (primary AND secondary), such as normal or normal (primary) / fire (secondary).
 {% enddocs %}

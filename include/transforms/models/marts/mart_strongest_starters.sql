@@ -1,5 +1,7 @@
 {{ mart_incremental_load_config('poke_id', 'stg_pokemons') }}
 
+-- Starter Pokémon only (filtered via the starter_pokemons seed), ranked by total stat points.
+
 WITH source AS (
   SELECT
     p.*

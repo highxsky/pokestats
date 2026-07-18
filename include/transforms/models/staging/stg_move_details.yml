@@ -1,6 +1,8 @@
-version: 2
 models:
   - name: stg_move_details
+    description: >-
+      One row per move, with its core battle attributes (power, accuracy, pp, priority,
+      type, damage class) and the generation that introduced it.
     columns:
       - name: fetch_date
         description: '{{ doc("fetch_date") }}'
@@ -34,8 +36,8 @@ models:
         data_type: INTEGER
         tests:
           - not_null
-      - name: type
-        description: '{{ doc("type") }}'
+      - name: type_name
+        description: '{{ doc("type_name") }}'
         data_type: VARCHAR
         tests:
           - not_null
@@ -47,8 +49,8 @@ models:
           - accepted_values:
               arguments:
                 values: [physical, special, status]
-      - name: poke_gen
-        description: '{{ doc("poke_gen") }}'
+      - name: gen_id
+        description: '{{ doc("gen_id") }}'
         data_type: INTEGER
         tests:
           - not_null

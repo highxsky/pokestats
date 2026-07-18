@@ -1,21 +1,23 @@
-{{ config(materialized="view") }}
+-- One row per (version group, version) pair, linking each game version to its
+-- version group and the generation it belongs to.
 
-WITH raw_input AS (
-  SELECT
+with raw_input as (
+  select
     fetch_date,
-    cast(payload->>'$.id' AS INT) AS version_group_id,
-    payload->>'$.name' AS version_group_name,
-    cast(split_part(payload->'$.generation'->>'$.url', '/', -2) AS INT) AS poke_gen,
-    payload->'$.versions' AS versions
-  FROM {{ source('raw', 'version_groups') }}
+    cast(payload ->> '$.id' as INT) as version_group_id,
+    cast(split_part(payload -> '$.generation' ->> '$.url', '/', -2) as INT) as gen_id,
+    payload ->> '$.name' as version_group_name,
+    payload -> '$.versions' as versions
+  from {{ source('raw', 'version_groups') }}
 )
 
-SELECT
+select
   ri.fetch_date,
   ri.version_group_id,
   ri.version_group_name,
-  ri.poke_gen,
-  cast(split_part(v.value->>'$.url', '/', -2) AS INT) AS version_id,
-  v.value->>'$.name' AS version_name
-FROM raw_input ri,
-json_each(ri.versions) AS v
+  ri.gen_id,
+  cast(split_part(v.value ->> '$.url', '/', -2) as INT) as version_id,
+  v.value ->> '$.name' as version_name
+-- Explode the versions JSON array: one row per version in the group
+from raw_input as ri,
+  json_each(ri.versions) as v

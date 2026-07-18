@@ -1,71 +1,39 @@
-version: 2
 models:
   - name: int_stats
+    description: One row per (Pokémon, stat) for current stats, exploded into long format.
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
         description: '{{ doc("fetch_date") }}'
         tests:
           - not_null
+      - name: stat_id
+        data_type: VARCHAR
+        description: Surrogate key for a pokemon's current stat, built from (poke_id, stat_name)
+        tests:
+          - unique
+          - not_null
       - name: poke_id
         data_type: INTEGER
         description: '{{ doc("poke_id") }}'
         tests:
-          - unique
           - not_null
-      - name: hp
+      - name: stat_name
+        data_type: VARCHAR
+        description: '{{ doc("stat_name") }}'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [hp, attack, defense, special-attack, special-defense, speed]
+      - name: stat_value
         data_type: INTEGER
+        description: '{{ doc("stat_value") }}'
         tests:
           - not_null
           - accepted_range:
               arguments:
                 min_value: 0
                 max_value: 255
-        description: '{{ doc("hp") }}'
-      - name: attack
-        data_type: INTEGER
-        tests:
-          - not_null
-          - accepted_range:
-              arguments:
-                min_value: 0
-                max_value: 255
-        description: '{{ doc("attack") }}'
-      - name: defense
-        data_type: INTEGER
-        tests:
-          - not_null
-          - accepted_range:
-              arguments:
-                min_value: 0
-                max_value: 255
-        description: '{{ doc("defense") }}'
-      - name: special_attack
-        data_type: INTEGER
-        tests:
-          - not_null
-          - accepted_range:
-              arguments:
-                min_value: 0
-                max_value: 255
-        description: '{{ doc("special_attack") }}'
-      - name: special_defense
-        data_type: INTEGER
-        tests:
-          - not_null
-          - accepted_range:
-              arguments:
-                min_value: 0
-                max_value: 255
-        description: '{{ doc("special_defense") }}'
-      - name: speed
-        data_type: INTEGER
-        tests:
-          - not_null
-          - accepted_range:
-              arguments:
-                min_value: 0
-                max_value: 255
-        description: '{{ doc("speed") }}'
 sources: []
 seeds: []

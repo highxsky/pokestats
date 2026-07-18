@@ -1,4 +1,3 @@
-
 name: 'transforms'
 version: '1.0.0'
 profile: 'transforms'
@@ -35,6 +34,10 @@ models:
       +schema: marts
       +meta:
         dbt-osmosis: "{model}.yml"
+    # legacy:
+    #   +enabled: false
+    #   +meta:
+    #     dbt-osmosis: "{model}.yml"
 
 seeds:
   transforms:

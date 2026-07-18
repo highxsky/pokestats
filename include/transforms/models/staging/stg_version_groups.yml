@@ -1,6 +1,8 @@
-version: 2
 models:
   - name: stg_version_groups
+    description: >-
+      One row per (version group, version) pair, linking each game version to its
+      version group and the generation it belongs to.
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
@@ -17,9 +19,9 @@ models:
         description: '{{ doc("version_group_name") }}'
         tests:
           - not_null
-      - name: poke_gen
+      - name: gen_id
         data_type: INTEGER
-        description: '{{ doc("poke_gen") }}'
+        description: '{{ doc("gen_id") }}'
         tests:
           - not_null
       - name: version_id

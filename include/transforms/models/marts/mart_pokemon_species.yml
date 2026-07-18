@@ -1,4 +1,3 @@
-version: 2
 models:
   - name: mart_pokemon_species
     description: >-

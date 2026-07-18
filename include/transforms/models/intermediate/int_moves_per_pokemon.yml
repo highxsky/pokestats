@@ -1,6 +1,6 @@
-version: 2
 models:
-  - name: int_pokemon_moves
+  - name: int_moves_per_pokemon
+    description: One row per (Pokémon, move) bridge linking Pokémon to the moves they can learn.
     columns:
       - name: pokemon_move_id
         data_type: VARCHAR

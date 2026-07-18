@@ -1,6 +1,8 @@
-version: 2
 models:
   - name: stg_pokemon_species
+    description: >-
+      One row per Pokémon species (latest fetch): descriptive attributes such as flavour text,
+      genus, colour, habitat, legendary/mythical/baby flags and the evolution parent.
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
@@ -13,7 +15,7 @@ models:
         tests:
           - unique
           - not_null
-      - name: description
+      - name: poke_description
         data_type: VARCHAR
         description: '{{ doc("poke_description") }}'
       - name: genus

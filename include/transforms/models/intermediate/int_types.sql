@@ -1,16 +1,27 @@
-{{ config(materialized='view') }}
+-- One row per (Pokémon, slot) for current type assignments.
+-- Explodes the types JSON array from stg_pokemons into long format.
 
-WITH parsed as (
-  SELECT
+with source as (
+  select
     fetch_date,
     poke_id,
-    CAST(je.value->>'$.slot' AS INT) AS slot,
-    je.value->>'$.type.name' AS type
-  FROM {{ ref('stg_types') }} t,
-    json_each(t.types) AS je
+    types
+  from {{ ref('stg_pokemons') }}
+),
+
+-- Explode the types array: one row per type slot
+by_slot as (
+  select
+    fetch_date,
+    poke_id,
+    unnest(types) as slot
+  from source
 )
 
-SELECT
-  {{ dbt_utils.generate_surrogate_key(["poke_id", "slot"]) }} AS "type_id",
-  p.*
-FROM parsed p
+select
+  fetch_date,
+  {{ dbt_utils.generate_surrogate_key(["poke_id", "slot"]) }} as type_id,
+  poke_id,
+  slot.slot,
+  slot.type.name as type_name
+from by_slot

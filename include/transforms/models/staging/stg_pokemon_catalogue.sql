@@ -1,28 +1,29 @@
--- Query to fetch from raw to staging and materialize as view
-{{ config(materialized="view") }}
+-- One row per Pokémon (latest fetch), mapping each Pokémon to the generation it was introduced in.
 
-WITH raw_input AS (
-  SELECT
+with raw_input as (
+  select
     fetch_date,
-    cast(payload->'$.id' AS INT) AS poke_gen,
-    payload->'$.pokemon_species' AS pkm_species
-  FROM {{ source('raw', 'pokemon_catalogue') }}
+    cast(payload -> '$.id' as INT) as gen_id,
+    payload -> '$.pokemon_species' as pkm_species
+  from {{ source('raw', 'pokemon_catalogue') }}
 ),
 
-parsed AS (
-  SELECT
+-- Explode the pokemon_species JSON array: one row per Pokémon in the generation
+parsed as (
+  select
     ri.fetch_date,
-    ri.poke_gen,
-    cast(split_part(je.value->>'$.url', '/', -2) AS INT) AS poke_id,
-    je.value->>'$.name' AS poke_name
-  FROM raw_input ri,
-  json_each(ri.pkm_species) AS je
+    ri.gen_id,
+    cast(split_part(je.value ->> '$.url', '/', -2) as INT) as poke_id,
+    je.value ->> '$.name' as poke_name
+  from raw_input as ri,
+    json_each(ri.pkm_species) as je
 )
 
-SELECT
+select
   fetch_date,
-  poke_gen,
+  gen_id,
   poke_id,
   poke_name
-FROM parsed
-QUALIFY ROW_NUMBER() OVER (PARTITION BY poke_id ORDER BY fetch_date DESC) = 1
+from parsed
+-- Keep only the latest fetch per Pokémon
+qualify row_number() over (partition by poke_id order by fetch_date desc) = 1

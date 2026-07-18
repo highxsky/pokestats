@@ -1,6 +1,5 @@
-version: 2
 models:
-  - name: mart_pokemon_moves
+  - name: mart_moves_per_pokemon
     description: One row per pokemon x move
     columns:
       - name: pokemon_move_id

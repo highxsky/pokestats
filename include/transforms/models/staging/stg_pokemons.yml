@@ -1,40 +1,39 @@
-version: 2
 models:
   - name: stg_pokemons
+    description: >-
+      One row per Pokémon. Parses the raw PokéAPI payload into typed columns and keeps
+      the nested moves/stats/types/past_stats/past_types arrays for downstream unnesting.
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
         description: '{{ doc("fetch_date") }}'
         tests:
           - not_null
-      - name: poke_gen
-        description: '{{ doc("poke_gen") }}'
-        data_type: SMALLINT
-        tests:
-          - not_null
       - name: poke_id
-        description: '{{ doc("poke_id") }}'
         data_type: INTEGER
+        description: '{{ doc("poke_id") }}'
         tests:
-          - unique
           - not_null
+          - unique
       - name: poke_name
-        description: '{{ doc("poke_name") }}'
         data_type: VARCHAR
+        description: '{{ doc("poke_name") }}'
         tests:
           - not_null
       - name: height
-        description: '{{ doc("height") }}'
         data_type: DOUBLE
+        description: '{{ doc("height") }}'
         tests:
+          - not_null
           - accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: weight
-        description: '{{ doc("weight") }}'
         data_type: DOUBLE
+        description: '{{ doc("weight") }}'
         tests:
+          - not_null
           - accepted_range:
               arguments:
                 min_value: 0

@@ -1,15 +1,15 @@
-version: 2
 models:
   - name: stg_pokemon_catalogue
+    description: One row per Pokémon (latest fetch), mapping each Pokémon to the generation it was introduced in.
     columns:
       - name: fetch_date
         data_type: TIMESTAMP
         description: '{{ doc("fetch_date") }}'
         tests:
           - not_null
-      - name: poke_gen
+      - name: gen_id
         data_type: INTEGER
-        description: '{{ doc("poke_gen") }}'
+        description: '{{ doc("gen_id") }}'
         tests:
           - not_null
       - name: poke_name

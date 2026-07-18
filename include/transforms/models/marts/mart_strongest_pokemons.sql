@@ -1,5 +1,7 @@
 {{ config(materialized='view') }}
 
+-- All Pokémon ranked by total stat points, with a percentile-based strength tier (S to F).
+
 WITH ranked AS (
   SELECT
     mp.poke_gen,

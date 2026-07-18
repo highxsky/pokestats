@@ -1,6 +1,6 @@
-version: 2
 models:
   - name: mart_pokemons
+    description: One row per Pokémon with its generation, name, height and weight.
     columns:
       - name: poke_gen
         data_type: SMALLINT

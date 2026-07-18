@@ -1,4 +1,3 @@
-version: 2
 models:
   - name: mart_past_types
     description: Full type history per pokemon per slot, with generation-based validity windows

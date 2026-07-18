@@ -1,6 +1,9 @@
 {{ config(materialized="table") }}
 
--- Extracting required fields from raw pokemons source
+-- One row per Pokémon. Parses the raw PokéAPI payload into typed columns and keeps
+-- the nested moves/stats/types/past_stats/past_types arrays for downstream unnesting.
+
+-- Extract the required fields from the raw pokemons payload
 with parsed as (
   select
     fetch_date,

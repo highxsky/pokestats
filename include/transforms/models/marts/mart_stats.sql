@@ -1,5 +1,7 @@
 {{ mart_incremental_load_config('poke_id', 'int_stats') }}
 
+-- One row per Pokémon: pivots the long int_stats into one column per stat and sums them into a total.
+
 {% set stat_names = stat_values() %}
 
 with source as (

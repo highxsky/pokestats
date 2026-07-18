@@ -1,10 +1,8 @@
-{{ config(materialized="view") }}
-
--- Step 1 - raw input
--- Step 2 - parsed input (picking what's needed / relevant)
--- Step 3 - processing + casting types
+-- One row per Pokémon species (latest fetch): descriptive attributes such as flavour text,
+-- genus, colour, habitat, legendary/mythical/baby flags and the evolution parent.
 
 with raw_input as (
+  -- Keep only the latest fetch per species
   select
     fetch_date,
     id as poke_id,
@@ -13,6 +11,7 @@ with raw_input as (
   qualify row_number() over (partition by id order by fetch_date desc) = 1
 ),
 
+-- Parse the required fields out of the raw JSON payload
 parsed as (
   select
     fetch_date,
@@ -33,6 +32,7 @@ parsed as (
   from raw_input
 )
 
+-- Pick the English flavour text/genus and strip control characters from the description
 select
   fetch_date,
   poke_id,

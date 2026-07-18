@@ -1,3 +1,6 @@
+-- One row per (Pokémon, stat, validity interval). Combines current stats with the
+-- past-stats changelog into generation-ranged validity windows (SCD type-2 style).
+
 -- Fetching stats from past stats table (i.e. from changelog)
 with past as (
   select

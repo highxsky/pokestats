@@ -1,3 +1,6 @@
+-- One row per (Pokémon, slot, validity interval). Combines current types with the
+-- past-types changelog into generation-ranged validity windows (SCD type-2 style).
+
 -- Fetching types from past types table (i.e. from changelog)
 with past as (
   select

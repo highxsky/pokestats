@@ -1,4 +1,8 @@
+-- One row per (Pokémon, generation, stat) recorded in the past-stats changelog.
+-- Explodes the nested past_stats JSON (generation -> stats).
+
 with source as (
+  -- Keep only Pokémon that have a past-stats changelog
   select
     fetch_date,
     poke_id,
@@ -7,6 +11,7 @@ with source as (
   where len(past_stats) <> 0
 ),
 
+-- Explode the outer array: one row per changelog generation
 by_gen as (
   select
     fetch_date,
@@ -15,6 +20,7 @@ by_gen as (
   from source
 ),
 
+-- Explode the inner array: one row per stat within each generation
 by_stat as (
   select
     fetch_date,

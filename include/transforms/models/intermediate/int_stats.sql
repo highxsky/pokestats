@@ -1,3 +1,6 @@
+-- One row per (Pokémon, stat) for current stats.
+-- Explodes the stats JSON array from stg_pokemons into long format.
+
 with source as (
   select
     fetch_date,
@@ -6,6 +9,7 @@ with source as (
   from {{ ref('stg_pokemons') }}
 ),
 
+-- Explode the stats array: one row per stat
 by_stat as (
   select
     fetch_date,

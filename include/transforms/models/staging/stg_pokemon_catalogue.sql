@@ -1,5 +1,4 @@
--- Query to fetch from raw to staging and materialize as view
-{{ config(materialized="view") }}
+-- One row per Pokémon (latest fetch), mapping each Pokémon to the generation it was introduced in.
 
 with raw_input as (
   select
@@ -9,6 +8,7 @@ with raw_input as (
   from {{ source('raw', 'pokemon_catalogue') }}
 ),
 
+-- Explode the pokemon_species JSON array: one row per Pokémon in the generation
 parsed as (
   select
     ri.fetch_date,
@@ -25,4 +25,5 @@ select
   poke_id,
   poke_name
 from parsed
+-- Keep only the latest fetch per Pokémon
 qualify row_number() over (partition by poke_id order by fetch_date desc) = 1

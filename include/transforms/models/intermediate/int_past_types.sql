@@ -1,4 +1,8 @@
+-- One row per (Pokémon, generation, slot) recorded in the past-types changelog.
+-- Explodes the nested past_types JSON (generation -> types).
+
 with source as (
+  -- Keep only Pokémon that have a past-types changelog
   select
     fetch_date,
     poke_id,
@@ -7,6 +11,7 @@ with source as (
   where len(past_types) <> 0
 ),
 
+-- Explode the outer array: one row per changelog generation
 by_gen as (
   select
     fetch_date,
@@ -15,6 +20,7 @@ by_gen as (
   from source
 ),
 
+-- Explode the inner array: one row per type slot within each generation
 by_slot as (
   select
     fetch_date,

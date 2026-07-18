@@ -1,4 +1,5 @@
--- moves per pokemon (pokemon id, move id)
+-- One row per (Pokémon, move) bridge.
+-- Explodes the moves JSON array from stg_pokemons and derives the move id from its URL.
 
 with source as (
   select
@@ -8,7 +9,7 @@ with source as (
   from {{ ref('stg_pokemons') }}
 ),
 
--- Step 1: parse JSON array, fetch only required column
+-- Explode the moves array: one row per move entry
 by_move as (
   select
     fetch_date,
@@ -17,6 +18,7 @@ by_move as (
   from source
 ),
 
+-- Derive the integer move id from the entry URL
 parsed as (
   select
     fetch_date,

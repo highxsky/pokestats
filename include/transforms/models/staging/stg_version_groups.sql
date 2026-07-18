@@ -1,4 +1,5 @@
-{{ config(materialized="view") }}
+-- One row per (version group, version) pair, linking each game version to its
+-- version group and the generation it belongs to.
 
 with raw_input as (
   select
@@ -17,5 +18,6 @@ select
   ri.gen_id,
   cast(split_part(v.value ->> '$.url', '/', -2) as INT) as version_id,
   v.value ->> '$.name' as version_name
+-- Explode the versions JSON array: one row per version in the group
 from raw_input as ri,
   json_each(ri.versions) as v

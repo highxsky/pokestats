@@ -1,3 +1,6 @@
+-- One row per (Pokémon, slot) for current type assignments.
+-- Explodes the types JSON array from stg_pokemons into long format.
+
 with source as (
   select
     fetch_date,
@@ -6,6 +9,7 @@ with source as (
   from {{ ref('stg_pokemons') }}
 ),
 
+-- Explode the types array: one row per type slot
 by_slot as (
   select
     fetch_date,

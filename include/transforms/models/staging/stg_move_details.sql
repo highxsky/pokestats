@@ -1,4 +1,5 @@
-{{ config(materialized="view") }}
+-- One row per move, with its core battle attributes (power, accuracy, pp, priority,
+-- type, damage class) and the generation that introduced it.
 
 with parsed as (
   select

@@ -11,6 +11,7 @@ models:
       - name: hp
         data_type: INTEGER
         tests:
+          - not_null
           - accepted_range:
               arguments:
                 min_value: 0
@@ -19,6 +20,7 @@ models:
       - name: attack
         data_type: INTEGER
         tests:
+          - not_null
           - accepted_range:
               arguments:
                 min_value: 0
@@ -27,6 +29,7 @@ models:
       - name: defense
         data_type: INTEGER
         tests:
+          - not_null
           - accepted_range:
               arguments:
                 min_value: 0
@@ -35,6 +38,7 @@ models:
       - name: special_attack
         data_type: INTEGER
         tests:
+          - not_null
           - accepted_range:
               arguments:
                 min_value: 0
@@ -43,6 +47,7 @@ models:
       - name: special_defense
         data_type: INTEGER
         tests:
+          - not_null
           - accepted_range:
               arguments:
                 min_value: 0
@@ -51,6 +56,7 @@ models:
       - name: speed
         data_type: INTEGER
         tests:
+          - not_null
           - accepted_range:
               arguments:
                 min_value: 0

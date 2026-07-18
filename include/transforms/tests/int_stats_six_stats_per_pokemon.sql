@@ -1,12 +1,10 @@
--- every pokemon must have all 6 stat columns populated (non-null)
--- this test returns rows where any stat is missing
+{% set stat_names = stat_values() %}
+
+-- every pokemon must have all 6 current stats (one row per stat)
+-- this test returns pokemons that don't have exactly 6 stat rows
 SELECT
-    poke_id
+    poke_id,
+    COUNT(DISTINCT stat_name) AS stat_count
 FROM {{ ref('int_stats') }}
-WHERE
-    hp IS NULL
-    OR attack IS NULL
-    OR defense IS NULL
-    OR special_attack IS NULL
-    OR special_defense IS NULL
-    OR speed IS NULL
+GROUP BY poke_id
+HAVING COUNT(DISTINCT stat_name) <> {{ stat_names | length }}

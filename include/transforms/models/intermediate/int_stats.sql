@@ -1,29 +1,23 @@
-{{ config(materialized="view") }}
-
-WITH parsed_stats as (
-  SELECT
+with source as (
+  select
     fetch_date,
     poke_id,
-    CAST(je.value->>'$.base_stat' AS INT) AS value,
-    je.value->>'$.stat.name' AS stat
-  FROM {{ ref('stg_stats') }} st,
-    json_each(st.stats) AS je
+    stats
+  from {{ ref('stg_pokemons') }}
 ),
 
-pivoted_stats AS (
-  PIVOT (SELECT * FROM parsed_stats)
-  ON stat IN ('hp', 'attack', 'special-attack', 'defense', 'special-defense', 'speed')
-  USING FIRST(value)
-  GROUP BY poke_id, fetch_date
+by_stat as (
+  select
+    fetch_date,
+    poke_id,
+    unnest(stats) as stat
+  from source
 )
 
-SELECT
+select
   fetch_date,
+  {{ dbt_utils.generate_surrogate_key(["poke_id", "stat.stat.name"]) }} as stat_id,
   poke_id,
-  hp,
-  attack,
-  defense,
-  "special-attack" as special_attack,
-  "special-defense" as special_defense,
-  speed
-FROM pivoted_stats
+  stat.stat.name as stat_name,
+  stat.base_stat as stat_value
+from by_stat

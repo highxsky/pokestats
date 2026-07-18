@@ -1,26 +1,34 @@
-{{ config(materialized="view") }}
-
-WITH source as (
-    SELECT
-        fetch_date,
-        poke_id,
-        past_stats
-    FROM {{ ref('stg_past_stats') }}
+with source as (
+  select
+    fetch_date,
+    poke_id,
+    past_stats
+  from {{ ref('stg_pokemons') }}
+  where len(past_stats) <> 0
 ),
 
-parsed AS (
-    SELECT
-        fetch_date,
-        poke_id,
-        CAST(STRING_SPLIT(RTRIM(gen->>'$.generation.url', '/'), '/')[-1] AS INT) AS poke_gen,
-        CAST(stat->>'$.base_stat' AS INT) AS stat_value,
-        stat->>'$.stat.name' AS stat_name
-    FROM source,
-        UNNEST(from_json(source.past_stats, '["json"]')) AS t1(gen),
-        UNNEST(from_json(gen->'stats', '["json"]')) AS t2(stat)
+by_gen as (
+  select
+    fetch_date,
+    poke_id,
+    unnest(past_stats) as gen
+  from source
+),
+
+by_stat as (
+  select
+    fetch_date,
+    poke_id,
+    split_part(gen.generation.url, '/', -2)::INT as gen_id,
+    unnest(gen.stats) as stat
+  from by_gen
 )
 
-SELECT
-    {{ dbt_utils.generate_surrogate_key(['poke_id', 'poke_gen', 'stat_name']) }} AS past_stat_id,
-    p.*
-FROM parsed p
+select
+  {{ dbt_utils.generate_surrogate_key(['poke_id', 'gen_id', 'stat.stat.name']) }} as past_stat_id,
+  fetch_date,
+  poke_id,
+  gen_id,
+  stat.stat.name as stat_name,
+  stat.base_stat as stat_value
+from by_stat

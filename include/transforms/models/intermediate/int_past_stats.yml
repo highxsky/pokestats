@@ -18,9 +18,9 @@ models:
         description: '{{ doc("poke_id") }}'
         tests:
           - not_null
-      - name: poke_gen
+      - name: gen_id
         data_type: INTEGER
-        description: '{{ doc("poke_gen") }}'
+        description: '{{ doc("gen_id") }}'
         tests:
           - not_null
       - name: stat_name

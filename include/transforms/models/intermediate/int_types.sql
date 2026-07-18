@@ -1,16 +1,23 @@
-{{ config(materialized='view') }}
-
-WITH parsed as (
-  SELECT
+with source as (
+  select
     fetch_date,
     poke_id,
-    CAST(je.value->>'$.slot' AS INT) AS slot,
-    je.value->>'$.type.name' AS type
-  FROM {{ ref('stg_types') }} t,
-    json_each(t.types) AS je
+    types
+  from {{ ref('stg_pokemons') }}
+),
+
+by_slot as (
+  select
+    fetch_date,
+    poke_id,
+    unnest(types) as slot
+  from source
 )
 
-SELECT
-  {{ dbt_utils.generate_surrogate_key(["poke_id", "slot"]) }} AS "type_id",
-  p.*
-FROM parsed p
+select
+  fetch_date,
+  {{ dbt_utils.generate_surrogate_key(["poke_id", "slot"]) }} as type_id,
+  poke_id,
+  slot.slot,
+  slot.type.name as type_name
+from by_slot

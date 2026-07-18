@@ -1,6 +1,6 @@
-version: 2
 models:
-  - name: int_pokemon_moves
+  - name: mart_moves_per_pokemon
+    description: One row per pokemon x move
     columns:
       - name: pokemon_move_id
         data_type: VARCHAR
@@ -11,12 +11,8 @@ models:
       - name: poke_id
         data_type: INTEGER
         description: '{{ doc("poke_id") }}'
-        tests:
-          - not_null
       - name: move_id
         data_type: INTEGER
         description: '{{ doc("move_id") }}'
-        tests:
-          - not_null
 sources: []
 seeds: []

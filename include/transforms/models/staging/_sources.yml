@@ -1,7 +1,6 @@
 sources:
   - name: raw
     schema: raw
-    loaded_at_field: fetch_date
     tables:
 
       - name: pokemons

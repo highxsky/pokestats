@@ -249,3 +249,5 @@ __marimo__/
 
 # Raw data archive (Parquet backups / landing zone — data, not code)
 include/archive/
+# Archived pre-consolidation dbt models (preserved in git history)
+old/

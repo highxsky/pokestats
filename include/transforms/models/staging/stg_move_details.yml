@@ -1,6 +1,8 @@
-version: 2
 models:
   - name: stg_move_details
+    description: >-
+      One row per move, with its core battle attributes (power, accuracy, pp, priority,
+      type, damage class) and the generation that introduced it.
     columns:
       - name: fetch_date
         description: '{{ doc("fetch_date") }}'

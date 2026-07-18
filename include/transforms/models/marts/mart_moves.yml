@@ -1,4 +1,3 @@
-version: 2
 models:
   - name: mart_moves
     description: One row per move with its core attributes

@@ -1,6 +1,6 @@
-version: 2
 models:
   - name: int_past_types
+    description: One row per (Pokémon, generation, slot) recorded in the past-types changelog.
     columns:
       - name: past_type_id
         data_type: VARCHAR

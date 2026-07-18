@@ -1,6 +1,6 @@
-version: 2
 models:
   - name: int_types
+    description: One row per (Pokémon, slot) for current type assignments, exploded into long format.
     columns:
       - name: type_id
         data_type: VARCHAR

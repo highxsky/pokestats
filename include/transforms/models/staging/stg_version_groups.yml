@@ -1,5 +1,8 @@
 models:
   - name: stg_version_groups
+    description: >-
+      One row per (version group, version) pair, linking each game version to its
+      version group and the generation it belongs to.
     columns:
       - name: fetch_date
         data_type: TIMESTAMP

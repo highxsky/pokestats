@@ -1,6 +1,6 @@
-version: 2
 models:
   - name: int_past_stats
+    description: One row per (Pokémon, generation, stat) recorded in the past-stats changelog.
     columns:
       - name: past_stat_id
         data_type: VARCHAR
@@ -25,7 +25,7 @@ models:
           - not_null
       - name: stat_name
         data_type: VARCHAR
-        description: A pokemon's stat name (e.g. attack, speed)
+        description: '{{ doc("stat_name") }}'
         tests:
           - not_null
           - accepted_values:
@@ -33,7 +33,7 @@ models:
                 values: [hp, attack, defense, special, special-attack, special-defense, speed]
       - name: stat_value
         data_type: INTEGER
-        description: A pokemon's stat value (e.g. 85)
+        description: '{{ doc("stat_value") }}'
         tests:
           - not_null
           - accepted_range:

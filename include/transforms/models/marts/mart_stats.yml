@@ -1,6 +1,6 @@
-version: 2
 models:
   - name: mart_stats
+    description: One row per Pokémon with its six base stats pivoted into columns, plus their total.
     columns:
       - name: poke_id
         data_type: INTEGER

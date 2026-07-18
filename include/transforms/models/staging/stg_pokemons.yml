@@ -1,5 +1,8 @@
 models:
   - name: stg_pokemons
+    description: >-
+      One row per Pokémon. Parses the raw PokéAPI payload into typed columns and keeps
+      the nested moves/stats/types/past_stats/past_types arrays for downstream unnesting.
     columns:
       - name: fetch_date
         data_type: TIMESTAMP

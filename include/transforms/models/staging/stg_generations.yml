@@ -1,5 +1,6 @@
 models:
   - name: stg_generations
+    description: One row per Pokémon generation, with its API name and English display name.
     columns:
       - name: fetch_date
         data_type: TIMESTAMP

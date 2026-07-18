@@ -1,4 +1,3 @@
-version: 2
 models:
   - name: mart_version_group_versions
     description: Mapping of individual game versions to their version groups

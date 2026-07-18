@@ -1,6 +1,8 @@
-version: 2
 models:
   - name: int_type_history
+    description: >-
+      One row per (Pokémon, slot, validity interval). Combines current types with the
+      past-types changelog into generation-ranged validity windows.
     tests:
       - dbt_utils.mutually_exclusive_ranges:
           arguments:

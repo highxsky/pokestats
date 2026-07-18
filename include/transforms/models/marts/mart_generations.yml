@@ -1,4 +1,3 @@
-version: 2
 models:
   - name: mart_generations
     description: One row per Pokemon generation with its English display name

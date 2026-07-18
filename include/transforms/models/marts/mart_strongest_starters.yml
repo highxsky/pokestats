@@ -1,4 +1,52 @@
-version: 2
 models:
   - name: mart_strongest_starters
-    columns: []
+    description: >-
+      Starter Pokémon (from the starter_pokemons seed) with their base stats,
+      ranked from strongest to weakest by total stat points.
+    columns:
+      - name: poke_gen
+        data_type: SMALLINT
+        description: '{{ doc("poke_gen") }}'
+      - name: poke_id
+        data_type: INTEGER
+        description: '{{ doc("poke_id") }}'
+        tests:
+          - unique
+          - not_null
+      - name: poke_name
+        data_type: VARCHAR
+        description: '{{ doc("poke_name") }}'
+        tests:
+          - not_null
+      - name: hp
+        data_type: INTEGER
+        description: '{{ doc("hp") }}'
+      - name: attack
+        data_type: INTEGER
+        description: '{{ doc("attack") }}'
+      - name: defense
+        data_type: INTEGER
+        description: '{{ doc("defense") }}'
+      - name: special_attack
+        data_type: INTEGER
+        description: '{{ doc("special_attack") }}'
+      - name: special_defense
+        data_type: INTEGER
+        description: '{{ doc("special_defense") }}'
+      - name: speed
+        data_type: INTEGER
+        description: '{{ doc("speed") }}'
+      - name: total_stat_points
+        data_type: INTEGER
+        description: '{{ doc("total_stat_points") }}'
+        tests:
+          - min_value:
+              arguments:
+                min_val: 0
+      - name: rank
+        data_type: INTEGER
+        description: Starter's rank among starters from strongest (1) to weakest, by total stat points
+        tests:
+          - not_null
+sources: []
+seeds: []

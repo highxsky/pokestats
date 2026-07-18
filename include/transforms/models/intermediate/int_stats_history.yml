@@ -1,6 +1,8 @@
-version: 2
 models:
   - name: int_stats_history
+    description: >-
+      One row per (Pokémon, stat, validity interval). Combines current stats with the
+      past-stats changelog into generation-ranged validity windows.
     tests:
       - dbt_utils.mutually_exclusive_ranges:
           arguments:
@@ -30,7 +32,7 @@ models:
           - not_null
       - name: stat_name
         data_type: VARCHAR
-        description: A pokemon's stat name (e.g. attack, speed)
+        description: '{{ doc("stat_name") }}'
         tests:
           - not_null
           - accepted_values:
@@ -38,7 +40,7 @@ models:
                 values: [hp, attack, defense, special, special-attack, special-defense, speed]
       - name: stat_value
         data_type: INTEGER
-        description: A pokemon's stat value (e.g. 85)
+        description: '{{ doc("stat_value") }}'
         tests:
           - not_null
           - accepted_range:

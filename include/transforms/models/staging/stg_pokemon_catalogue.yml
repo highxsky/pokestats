@@ -1,6 +1,6 @@
-version: 2
 models:
   - name: stg_pokemon_catalogue
+    description: One row per Pokémon (latest fetch), mapping each Pokémon to the generation it was introduced in.
     columns:
       - name: fetch_date
         data_type: TIMESTAMP

@@ -1,18 +1,20 @@
 version: 2
 models:
-  - name: int_type_history
+  - name: int_stats_history
     tests:
       - dbt_utils.mutually_exclusive_ranges:
           arguments:
             lower_bound_column: valid_from_gen
             upper_bound_column: coalesce(valid_to_gen, 999)
-            partition_by: poke_id, slot
+            partition_by: poke_id, stat_name
             gaps: required
             zero_length_range_allowed: true
     columns:
-      - name: type_id
+      - name: stat_id
         data_type: VARCHAR
-        description: '{{ doc("type_id") }}'
+        description: >-
+          Surrogate key for a pokemon's stat validity interval,
+          built from (poke_id, stat_name, valid_from_gen)
         tests:
           - unique
           - not_null
@@ -26,24 +28,23 @@ models:
         description: '{{ doc("poke_id") }}'
         tests:
           - not_null
-      - name: slot
-        data_type: INTEGER
-        tests:
-          - not_null
-          - accepted_values:
-              arguments:
-                values: [1, 2]
-        description: '{{ doc("slot") }}'
-      - name: type_name
+      - name: stat_name
         data_type: VARCHAR
+        description: A pokemon's stat name (e.g. attack, speed)
         tests:
           - not_null
           - accepted_values:
               arguments:
-                values: [normal, fire, water, electric, grass, ice, fighting,
-                         poison, ground, flying, psychic, bug, rock, ghost,
-                         dragon, dark, steel, fairy]
-        description: '{{ doc("type_name") }}'
+                values: [hp, attack, defense, special, special-attack, special-defense, speed]
+      - name: stat_value
+        data_type: INTEGER
+        description: A pokemon's stat value (e.g. 85)
+        tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 255
       - name: valid_from_gen
         data_type: INTEGER
         description: '{{ doc("valid_from_gen") }}'
